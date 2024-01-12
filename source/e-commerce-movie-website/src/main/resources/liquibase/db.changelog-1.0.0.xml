@@ -70,13 +70,13 @@
         <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_category_movie"
                                  constraintName="FK8ryt5m3exqcadtbrfv2wanbox" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_movies_movie" validate="true"/>
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="GIGABYTE (generated)" id="1704827682340-5">
         <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="db_movies_category_movie"
                                  constraintName="FKewwakousw8y6qpxmbtd151wf4" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_movies_category" validate="true"/>
+                                 referencedTableName="db_movies_category" validate="true" onDelete="CASCADE"/>
     </changeSet>
     <changeSet author="GIGABYTE (generated)" id="1704827682340-6">
         <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_movies_category"

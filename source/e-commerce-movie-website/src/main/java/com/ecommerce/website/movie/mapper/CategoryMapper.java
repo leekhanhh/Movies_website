@@ -6,7 +6,6 @@ import com.ecommerce.website.movie.form.category.UpdateCategoryForm;
 import com.ecommerce.website.movie.model.Category;
 import org.mapstruct.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
@@ -30,6 +29,13 @@ public interface CategoryMapper {
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     CategoryDto toCategoryDto(Category category);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "name", target = "name")
+    @Mapping(source = "kind", target = "kind")
+    @Named("toCategoryMovieDto")
+    @BeanMapping(ignoreByDefault = true)
+    CategoryDto toCategoryMovieDto(Category category);
 
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
