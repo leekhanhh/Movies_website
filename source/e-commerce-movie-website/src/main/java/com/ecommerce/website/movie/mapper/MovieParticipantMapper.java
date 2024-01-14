@@ -8,14 +8,14 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = MovieParticipantMapper.class)
+        uses = ParticipantMapper.class)
 public interface MovieParticipantMapper {
-//    @Mapping(source = "participant", target = "participant", qualifiedByName = "toMovieParticipantDto")
-//    @BeanMapping(ignoreByDefault = true)
-//    @Named("toMovieParticipantDto")
-//    MovieParticipantDto toMovieParticipantDto(MovieParticipant movieParticipant);
-//
-//    @IterableMapping(elementTargetType = MovieParticipantDto.class, qualifiedByName = "toMovieParticipantDto")
-//    @Named("toMovieParticipantDtoList")
-//    List<MovieParticipantDto> toMovieParticipantDtoList(List<MovieParticipant> movieParticipantList);
+    @Mapping(source = "participant", target = "participant", qualifiedByName = "toParticipantDto")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("toMovieParticipantDto")
+    MovieParticipantDto toMovieParticipantDto(MovieParticipant movieParticipant);
+
+    @IterableMapping(elementTargetType = MovieParticipantDto.class, qualifiedByName = "toMovieParticipantDto")
+    @Named("toMovieParticipantDtoList")
+    List<MovieParticipantDto> toMovieParticipantDtoList(List<MovieParticipant> movieParticipantList);
 }

@@ -12,5 +12,5 @@ public class UpdateParticipantForm {
     private String name;
     private String image;
     private Integer kind;
-    private String character;
+    private String filmCharacter;
 }

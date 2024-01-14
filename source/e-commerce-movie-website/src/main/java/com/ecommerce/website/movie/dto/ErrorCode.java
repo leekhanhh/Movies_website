@@ -17,4 +17,9 @@ public class ErrorCode {
      * Movie error code
      */
     public static final String MOVIE_NOT_FOUND = "ERROR-MOVIE-000";
+
+    /**
+     * Participant error code
+     */
+    public static final String PARTICIPANT_NOT_FOUND = "ERROR-PARTICIPANT-000";
 }

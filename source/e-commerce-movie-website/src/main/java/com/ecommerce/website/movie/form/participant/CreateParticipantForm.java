@@ -13,5 +13,5 @@ public class CreateParticipantForm {
     private String image;
     @NotNull
     private Integer kind;
-    private String character;
+    private String filmCharacter;
 }

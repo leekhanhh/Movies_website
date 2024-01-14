@@ -12,6 +12,7 @@ public class Participant {
     private Long id;
     private String name;
     private Integer kind;
+    @Column(columnDefinition = "TEXT")
     private String image;
-    private String character;
+    private String filmCharacter;
 }

@@ -9,5 +9,5 @@ public class ParticipantDto {
     private String name;
     private Integer kind;
     private String image;
-    private String character;
+    private String filmCharacter;
 }
