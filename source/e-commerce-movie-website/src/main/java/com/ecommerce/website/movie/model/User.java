@@ -23,5 +23,5 @@ public class User extends Auditable<String> {
     @MapsId
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
-    Account userAccount;
+    Account account;
 }

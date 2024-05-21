@@ -9,8 +9,7 @@ import org.mapstruct.*;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = CategoryMovieMapper.class)
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface MovieMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "overview", target = "overview")
@@ -24,7 +23,6 @@ public interface MovieMapper {
     @Mapping(source = "overview", target = "overview")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "imagePath", target = "imagePath")
-    @Mapping(source = "categoryMovieList", target = "categoryMovieList", qualifiedByName = "toCategoryMovieDtoList")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     @Named("toClientMovieDto")
@@ -39,7 +37,6 @@ public interface MovieMapper {
     @Mapping(source = "overview", target = "overview")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "imagePath", target = "imagePath")
-    @Mapping(source = "categoryMovieList", target = "categoryMovieList", qualifiedByName = "toCategoryMovieDtoList")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
@@ -58,4 +55,11 @@ public interface MovieMapper {
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
     void updateMovie(UpdateMovieForm movieForm, @MappingTarget Movie movie);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "title", target = "title")
+    @Named("autoCompleteDtoMovie")
+    @BeanMapping(ignoreByDefault = true)
+    MovieDto autoCompleteDtoMovie(Movie movie);
+
 }

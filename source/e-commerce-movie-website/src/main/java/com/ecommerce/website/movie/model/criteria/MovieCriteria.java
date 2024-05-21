@@ -1,4 +1,4 @@
-package com.ecommerce.website.movie.model.Criteria;
+package com.ecommerce.website.movie.model.criteria;
 
 import com.ecommerce.website.movie.model.Movie;
 import lombok.Data;
@@ -16,9 +16,9 @@ import java.util.List;
 public class MovieCriteria implements Serializable {
     private Long id;
     private String title;
-    private Integer voteCount;
     private Double price;
-    private Boolean isFree = true;
+    private Double fromPrice;
+    private Double toPrice;
     public Specification<Movie> getSpecification() {
         return new Specification<Movie>() {
             private static final long serialVersionUID = 1L;
@@ -31,14 +31,14 @@ public class MovieCriteria implements Serializable {
                 if (getTitle() != null) {
                     predicates.add(criteriaBuilder.like(root.get("title"), "%" + getTitle() + "%"));
                 }
-                if (getVoteCount() != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("voteCount"), getVoteCount()));
-                }
                 if (getPrice() != null) {
                     predicates.add(criteriaBuilder.equal(root.get("price"), getPrice()));
                 }
-                if (getIsFree() != null && getIsFree()){
-                    predicates.add(criteriaBuilder.equal(root.get("price"), 0D));
+                if(getFromPrice() != null){
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("price"),getPrice()));
+                }
+                if (getToPrice() != null) {
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), getPrice()));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }

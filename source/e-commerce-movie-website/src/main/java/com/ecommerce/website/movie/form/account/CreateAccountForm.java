@@ -2,10 +2,7 @@ package com.ecommerce.website.movie.form.account;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @lombok.Data
 public class CreateAccountForm {
@@ -15,11 +12,10 @@ public class CreateAccountForm {
     @NotNull
     @ApiModelProperty(value = "Password", required = true, example = "123456")
     @Size(min = 10, message = "Password must be at least 8 characters long")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
-            message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")
     private String password;
     @NotEmpty
     @ApiModelProperty(value = "Email", required = true, example = "abc@gmail.com")
+    @Email(message = "Email should be valid")
     private String email;
     @ApiModelProperty(value = "Phone", example = "0123456789")
     private String phone;

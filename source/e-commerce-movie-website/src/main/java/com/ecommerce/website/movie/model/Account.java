@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -31,9 +30,7 @@ public class Account extends Auditable<String> {
     String username;
     String phone;
     String avatarPath;
-    @Temporal(TemporalType.TIMESTAMP)
     Date lastLogin;
     String resetPassword;
-    @Temporal(TemporalType.TIMESTAMP)
     Date resetPasswordExpired;
 }

@@ -1,4 +1,4 @@
-package com.ecommerce.website.movie.model.Criteria;
+package com.ecommerce.website.movie.model.criteria;
 
 import com.ecommerce.website.movie.model.Category;
 import lombok.Data;
