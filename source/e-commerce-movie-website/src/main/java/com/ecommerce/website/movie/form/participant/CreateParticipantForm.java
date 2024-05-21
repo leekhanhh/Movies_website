@@ -14,4 +14,6 @@ public class CreateParticipantForm {
     @NotNull
     private Integer kind;
     private String filmCharacter;
+    @NotNull
+    private Long movieId;
 }

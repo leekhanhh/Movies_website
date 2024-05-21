@@ -17,7 +17,9 @@ public class FavoriteList {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
     Account account;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_id")
     Movie movie;
 }

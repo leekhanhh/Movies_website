@@ -15,7 +15,9 @@ public class VoteMovie extends Auditable<String> {
     @Id
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "movie_id")
     Movie movie;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "account_id")
     Account account;
 }

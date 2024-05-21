@@ -23,5 +23,4 @@ public class PaymentDetail extends Auditable<String> {
     private String state;
     private String zipCode;
     private String country;
-
 }

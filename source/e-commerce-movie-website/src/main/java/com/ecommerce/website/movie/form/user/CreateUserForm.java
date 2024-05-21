@@ -13,25 +13,9 @@ import javax.validation.constraints.Size;
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class CreateUserForm {
-    @NotEmpty(message = "User name can not be empty")
-    @Size(min = 6, max = 50, message = "User name must be at least 6 characters and at most 50 characters")
-    @ApiModelProperty(value = "Username", required = true)
-    String username;
-    @NotEmpty(message = "Email can not be empty")
-    @Email(message = "Email is not valid")
-    @ApiModelProperty(value = "Email", required = true)
-    String email;
-    @NotEmpty(message = "Password can not be empty")
-    @Size(min = 6, max = 50, message = "Password must be at least 6 characters and at most 50 characters")
-    @ApiModelProperty(value = "Password", required = true)
-    String password;
-    @ApiModelProperty(value = "User phone number")
-    String phone;
-    @ApiModelProperty(value = "User avatar")
-    String avatarPath;
-    @ApiModelProperty(value = "User login check")
     @NotEmpty
-    Boolean isVerify;
+    @ApiModelProperty(value = "The account which its id is mapped with this user", required = true)
+    Long accountId;
     @ApiModelProperty(value = "User date of birth", required = true)
     @Past(message = "Date of birth must be in the past")
     String dateOfBirth;
