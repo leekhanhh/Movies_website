@@ -22,4 +22,10 @@ public class ErrorCode {
      * Participant error code
      */
     public static final String PARTICIPANT_NOT_FOUND = "ERROR-PARTICIPANT-000";
+
+    /**
+     * Account error code
+     */
+    public static final String DUPLICATED_EMAIL_ACCOUNT = "DUPLICATED_EMAIL_ACCOUNT";
+
 }

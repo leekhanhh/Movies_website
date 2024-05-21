@@ -16,7 +16,7 @@ public class Constant {
     public static final Integer ROLE_USER = 1;
     public static final Integer ROLE_ADMIN = 0;
     //Gender
-    public static final Integer MALE = 0;
-    public static final Integer FEMALE = 1;
+    public static final Integer MALE = 1;
+    public static final Integer FEMALE = 2;
 
 }
