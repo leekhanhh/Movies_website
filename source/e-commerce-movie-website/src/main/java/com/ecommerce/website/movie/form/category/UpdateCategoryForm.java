@@ -16,6 +16,6 @@ public class UpdateCategoryForm {
     private String name;
     @ApiModelProperty(value = "description")
     private String description;
-    @ApiModelProperty(value = "ordering",example = "descending order")
+    @ApiModelProperty(value = "ordering",notes = "ordering type can be descending or ascending!")
     private Integer ordering;
 }

@@ -1,13 +1,14 @@
 package com.ecommerce.website.movie.dto.votemovie;
 
 import com.ecommerce.website.movie.dto.BaseInfo;
+import com.ecommerce.website.movie.dto.account.AccountDto;
+import com.ecommerce.website.movie.dto.movie.MovieDto;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class VoteMovieDto extends BaseInfo {
-    Long movieId;
-    Long accountId;
-    Long userId;
+    MovieDto movie;
+    AccountDto account;
 }

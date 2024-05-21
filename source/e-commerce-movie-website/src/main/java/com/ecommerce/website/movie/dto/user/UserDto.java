@@ -1,6 +1,7 @@
 package com.ecommerce.website.movie.dto.user;
 
 import com.ecommerce.website.movie.dto.BaseInfo;
+import com.ecommerce.website.movie.dto.account.AccountDto;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -11,5 +12,5 @@ import java.util.Date;
 public class UserDto extends BaseInfo {
     Integer gender;
     Date dateOfBirth;
-    Long accountId;
+    AccountDto account;
 }

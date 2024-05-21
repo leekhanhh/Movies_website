@@ -13,5 +13,5 @@ public class AccountDto extends BaseInfo {
     String avatarPath;
     Integer role;
     Date lastLogin;
-    PaymentDetail paymentDetails;
+//    PaymentDetailDto paymentDetail;
 }

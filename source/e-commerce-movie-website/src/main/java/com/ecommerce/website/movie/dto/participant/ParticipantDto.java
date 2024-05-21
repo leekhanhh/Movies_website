@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.dto.participant;
 
+import com.ecommerce.website.movie.dto.movie.MovieDto;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
@@ -11,5 +12,5 @@ public class ParticipantDto {
     private Integer kind;
     private String image;
     private String filmCharacter;
-    private Long movieId;
+    private MovieDto movie;
 }
