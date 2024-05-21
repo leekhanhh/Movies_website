@@ -1,25 +1,28 @@
 package com.ecommerce.website.movie.model;
 
-import com.ecommerce.website.movie.model.audit.Auditable;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = TablePrefix.PREFIX_TABLE + "review")
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = TablePrefix.PREFIX_TABLE + "participant")
 @Data
-public class Participant extends Auditable<String> {
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private Integer kind;
-    @Column(columnDefinition = "TEXT")
-    private String image;
-    private String filmCharacter;
+    Long id;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id")
+    Account account;
+    Long movieId;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "movie_id")
-    private Movie movie;
+    Movie movie;
+    String content;
 }

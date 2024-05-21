@@ -12,4 +12,11 @@ public class Constant {
     public static final Integer PERSON_KIND_ACTOR = 1;
     public static final Integer PERSON_KIND_DIRECTOR = 2;
 
+    //Role
+    public static final Integer ROLE_USER = 1;
+    public static final Integer ROLE_ADMIN = 0;
+    //Gender
+    public static final Integer MALE = 0;
+    public static final Integer FEMALE = 1;
+
 }

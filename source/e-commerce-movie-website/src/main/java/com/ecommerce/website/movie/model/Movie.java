@@ -22,11 +22,6 @@ public class Movie extends Auditable<String> {
     private Long id;
     private String title;
     private String overview;
-    private Integer voteCount;
     private Double price;
     private String imagePath;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie", cascade = CascadeType.REMOVE)
-    private List<CategoryMovie> categoryMovieList;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "movie", cascade = CascadeType.REMOVE)
-    private Set<MovieParticipant> movieParticipantList;
 }
