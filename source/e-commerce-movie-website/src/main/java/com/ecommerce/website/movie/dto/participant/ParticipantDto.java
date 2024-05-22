@@ -2,8 +2,6 @@ package com.ecommerce.website.movie.dto.participant;
 
 import com.ecommerce.website.movie.dto.movie.MovieDto;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
-
 
 @Data
 public class ParticipantDto {
