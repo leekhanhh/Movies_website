@@ -3,7 +3,83 @@
                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
                    xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="GIGABYTE (generated)" id="1704827682340-1">
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-1">
+        <createTable tableName="db_movies_account">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_accountPK"/>
+            </column>
+            <column name="email" type="VARCHAR(255)"/>
+            <column name="username" type="VARCHAR(255)"/>
+            <column name="password" type="VARCHAR(255)"/>
+            <column name="phone" type="VARCHAR(255)"/>
+            <column name="avatar_path" type="VARCHAR(255)"/>
+            <column name="last_login" type="datetime"/>
+            <column name="reset_password" type="VARCHAR(255)"/>
+            <column name="reset_password_expired" type="datetime"/>
+            <column name="role" type="INT"/>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-2">
+        <createTable tableName="db_movies_user">
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_userPK"/>
+            </column>
+            <column name="date_of_birth" type="datetime"/>
+            <column name="gender" type="INT"/>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-3">
+        <createTable tableName="db_movies_movie">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_moviePK"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="category_id" type="BIGINT"/>
+            <column name="overview" type="VARCHAR(255)"/>
+            <column name="image_path" type="VARCHAR(255)"/>
+            <column name="price" type="DOUBLE PRECISION"/>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-4">
         <createTable tableName="db_movies_category">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_categoryPK"/>
@@ -28,30 +104,27 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
-    <changeSet author="GIGABYTE (generated)" id="1704827682340-2">
-        <createTable tableName="db_movies_category_movie">
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-5">
+        <createTable tableName="db_movies_movie_genre">
             <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_category_moviePK"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_movie_genrePK"/>
             </column>
-            <column name="category_id" type="BIGINT">
-                <constraints nullable="false"/>
+            <column name="movie_id" type="BIGINT"/>
+            <column name="category_id" type="BIGINT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-6">
+        <createTable tableName="db_movies_participant">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_participantPK"/>
             </column>
+            <column name="name" type="VARCHAR(255)"/>
             <column name="movie_id" type="BIGINT">
                 <constraints nullable="false"/>
             </column>
-        </createTable>
-    </changeSet>
-    <changeSet author="GIGABYTE (generated)" id="1704827682340-3">
-        <createTable tableName="db_movies_movie">
-            <column autoIncrement="true" name="id" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_moviePK"/>
-            </column>
-            <column name="title" type="VARCHAR(255)"/>
-            <column name="overview" type="VARCHAR(255)"/>
-            <column name="price" type="DOUBLE PRECISION"/>
-            <column name="image_path" type="VARCHAR(255)"/>
-            <column name="vote_count" type="INT"/>
-            <column name="status" type="INT"/>
+            <column name="film_character" type="VARCHAR(255)"/>
+            <column name="image" type="TEXT"/>
+            <column name="kind" type="INT"/>
             <column name="create_by" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
@@ -64,24 +137,193 @@
             <column name="modified_date" type="datetime">
                 <constraints nullable="false"/>
             </column>
+            <column name="status" type="INT"/>
         </createTable>
     </changeSet>
-    <changeSet author="GIGABYTE (generated)" id="1704827682340-4">
-        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_category_movie"
-                                 constraintName="FK8ryt5m3exqcadtbrfv2wanbox" deferrable="false"
-                                 initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-7">
+        <createTable tableName="db_movies_favorite_list">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_favorite_listPK"/>
+            </column>
+            <column name="account_id" type="BIGINT"/>
+            <column name="movie_id" type="BIGINT"/>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
     </changeSet>
-    <changeSet author="GIGABYTE (generated)" id="1704827682340-5">
-        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="db_movies_category_movie"
-                                 constraintName="FKewwakousw8y6qpxmbtd151wf4" deferrable="false"
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-8">
+        <createTable tableName="db_movies_rating">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_ratingPK"/>
+            </column>
+            <column name="evaluation" type="DOUBLE PRECISION"/>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="movie_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-9">
+        <createTable tableName="db_movies_review">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_reviewPK"/>
+            </column>
+            <column name="content" type="VARCHAR(255)"/>
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="movie_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-10">
+        <createTable tableName="db_movies_vote_movie">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_vote_moviePK"/>
+            </column>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="movie_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-11">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_movies_vote_movie"
+                                 constraintName="FK_DB_MOVIES_VOTE_MOVIE_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-12">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="db_movies_movie"
+                                 constraintName="FK_DB_MOVIES_MOVIE_CATEGORY_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
                                  referencedTableName="db_movies_category" validate="true" onDelete="CASCADE"/>
     </changeSet>
-    <changeSet author="GIGABYTE (generated)" id="1704827682340-6">
-        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_movies_category"
-                                 constraintName="FKs4pc07jqp09f8oxpy5atrim4x" deferrable="false"
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-13">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_rating"
+                                 constraintName="FK_DB_MOVIES_RATING_MOVIE_ID" deferrable="false"
                                  initiallyDeferred="false" referencedColumnNames="id"
-                                 referencedTableName="db_movies_category" validate="true"/>
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-14">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="db_movies_review"
+                                 constraintName="FK_DB_MOVIES_REVIEW_USER_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-15">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_review"
+                                 constraintName="FK_DB_MOVIES_REVIEW_MOVIE_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-16">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_movies_favorite_list"
+                                 constraintName="FK_DB_MOVIES_FAVORITE_LIST_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-17">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_movies_rating"
+                                 constraintName="FK_DB_MOVIES_RATING_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_account" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-18">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_movies_user"
+                                 constraintName="FK_DB_MOVIES_USER_ACCOUNT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_account" validate="true"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-19">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_vote_movie"
+                                 constraintName="FK_DB_MOVIES_VOTE_MOVIE_MOVIE_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-20">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_favorite_list"
+                                 constraintName="FK_DB_MOVIES_FAVORITE_LIST_MOVIE_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-21">
+        <addForeignKeyConstraint baseColumnNames="category_id" baseTableName="db_movies_movie_genre"
+                                 constraintName="FK_DB_MOVIES_MOVIE_GENRE_CATEGORY_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_category" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-22">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_participant"
+                                 constraintName="FK_DB_MOVIES_PARTICIPANT_MOVIE_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-23">
+        <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_movie_genre"
+                                 constraintName="FK_DB_MOVIES_MOVIE_GENRE_MOVIE_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-24">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_movies_category"
+                                 constraintName="FK_DB_MOVIES_CATEGORY_PARENT_ID" deferrable="false"
+                                 initiallyDeferred="false" referencedColumnNames="id"
+                                 referencedTableName="db_movies_category" validate="true" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

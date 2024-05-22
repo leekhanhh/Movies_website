@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.model;
 
+import com.ecommerce.website.movie.model.audit.Auditable;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +14,7 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Review {
+public class Review extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;

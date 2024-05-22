@@ -97,4 +97,17 @@ public class AccountController {
         return apiResponseDto;
     }
 
+    @GetMapping(value = "/get-admin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<AccountDto> getAccount(@PathVariable Long id){
+        ApiResponseDto<AccountDto> apiResponseDto = new ApiResponseDto<>();
+        Account account = accountRepository.findById(id).orElse(null);
+        if (account != null) {
+            apiResponseDto.setMessage("Account found!");
+            apiResponseDto.setData(accountMapper.fromAccountEntityToDtoForServer(account));
+        } else {
+            apiResponseDto.setMessage("Account not found!");
+            apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
+        return apiResponseDto;
+    }
 }
