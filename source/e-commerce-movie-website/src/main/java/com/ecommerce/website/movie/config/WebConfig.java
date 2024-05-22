@@ -16,14 +16,23 @@ import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Configuration
 @EnableWebMvc
+@EnableAsync
+@CrossOrigin
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
@@ -69,5 +78,25 @@ public class WebConfig implements WebMvcConfigurer {
         SimpleDateFormat format = new SimpleDateFormat(Constant.DATE_TIME_FORMAT);
         objectMapper.setDateFormat(format);
         return objectMapper;
+    }
+
+    @Bean
+    public CorsFilter corsFilterSecurity() {
+        final UrlBasedCorsConfigurationSource source = getConfig();
+        return new CorsFilter(source);
+    }
+
+    private UrlBasedCorsConfigurationSource getConfig() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        final CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Collections.singletonList("*"));
+        config.setAllowedHeaders(Arrays.asList(
+                "Accept", "Origin", "Content-Type", "Depth", "User-Agent", "If-Modified-Since,",
+                "Cache-Control", "Authorization", "X-Req", "X-File-Size", "X-Requested-With", "X-File-Name", "Content-Disposition"));
+        config.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH"));
+        config.setExposedHeaders(Arrays.asList("Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization", "Content-Disposition"));
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

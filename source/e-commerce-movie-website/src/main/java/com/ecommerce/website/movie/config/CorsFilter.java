@@ -1,7 +1,8 @@
 package com.ecommerce.website.movie.config;
 
-import org.apache.logging.log4j.core.config.Order;
+
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
