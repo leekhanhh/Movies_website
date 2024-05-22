@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.controller;
 
+import com.ecommerce.website.movie.constant.Constant;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
@@ -8,8 +9,9 @@ import com.ecommerce.website.movie.form.movie.CreateMovieForm;
 import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
 import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.model.*;
-import com.ecommerce.website.movie.model.Criteria.MovieCriteria;
+import com.ecommerce.website.movie.model.criteria.MovieCriteria;
 import com.ecommerce.website.movie.repository.CategoryRepository;
+import com.ecommerce.website.movie.repository.MovieGenreRepository;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,32 +39,37 @@ public class MovieController {
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
-    CategoryMovieRepository categoryMovieRepository;
-    @Autowired
-    CategoryMovieMapper categoryMovieMapper;
+    MovieGenreRepository movieGenreRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<MovieDto> createMovie(@Valid @RequestBody CreateMovieForm movieForm, BindingResult bindingResult) {
-        ApiResponseDto<MovieDto> apiResponseDto = new ApiResponseDto<>();
+    public ApiResponseDto<Long> createMovie(@Valid @RequestBody CreateMovieForm movieForm,BindingResult bindingResult) {
+        ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
+        Category category = categoryRepository.findById(movieForm.getCategoryId()).orElse(null);
+        if (category == null || !category.getKind().equals(Constant.CATEGORY_KIND_MOVIE_TYPE)) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.CATEGORY_NOT_FOUND);
+            apiResponseDto.setMessage("Category not found or not movie type!");
+            return apiResponseDto;
+        }
         Movie movie = movieMapper.formCreateMovie(movieForm);
-
-        List<CategoryMovie> categoryMovieList = new ArrayList<>();
-        for (Long categoryId : movieForm.getCategoryListIds()) {
-            Category category = categoryRepository.findById(categoryId).orElse(null);
-            if (category != null) {
-                CategoryMovie categoryMovie = new CategoryMovie();
-                categoryMovie.setCategory(category);
-                categoryMovie.setMovie(movie);
-                categoryMovieList.add(categoryMovie);
+        movie.setCategory(category);
+        movieRepository.save(movie);
+        List<MovieGenre> genresMovieList = new ArrayList<>();
+        for (Long genreId : movieForm.getGenreIds()) {
+            Category genreCategory = categoryRepository.findById(genreId).orElse(null);
+            if (genreCategory != null && genreCategory.getKind().equals(Constant.CATEGORY_KIND_MOVIE_GENRE)) {
+                MovieGenre movieGenre = new MovieGenre();
+                movieGenre.setMovie(movie);
+                movieGenre.setCategory(genreCategory);
+                genresMovieList.add(movieGenre);
             }
         }
-        movieRepository.save(movie);
-        categoryMovieRepository.saveAll(categoryMovieList);
-        MovieDto movieDto = movieMapper.toServerMovieDto(movie);
-        movieDto.setCategoryMovieList(categoryMovieMapper.toCategoryMovieDtoList(categoryMovieList));
-        apiResponseDto.setMessage("New movie added successfully!");
-        apiResponseDto.setData(movieDto);
+        if(!genresMovieList.isEmpty()){
+            movieGenreRepository.saveAll(genresMovieList);
+        }
+        apiResponseDto.setData(movie.getId());
+        apiResponseDto.setMessage("Create movie successfully!");
         return apiResponseDto;
     }
 
@@ -134,42 +141,46 @@ public class MovieController {
     @Transactional
     public ApiResponseDto<MovieDto> updateMovie(@Valid @RequestBody UpdateMovieForm movieForm, BindingResult bindingResult) {
         ApiResponseDto<MovieDto> apiResponseDto = new ApiResponseDto<>();
-        Movie movie = movieRepository.findById(movieForm.getId()).orElse(null);
-        if (movie == null) {
+        Movie existedMovie = movieRepository.findById(movieForm.getId()).orElse(null);
+        if (existedMovie == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.MOVIE_NOT_FOUND);
             apiResponseDto.setMessage("Movie not found");
             return apiResponseDto;
         }
-        if (!movie.getTitle().equals(movieForm.getTitle())) {
-            movie.setTitle(movieForm.getTitle());
+        if (!existedMovie.getTitle().equals(movieForm.getTitle())) {
+            existedMovie.setTitle(movieForm.getTitle());
         }
-        List<CategoryMovie> categoryMovieList = categoryMovieRepository.findAllByMovieId(movie.getId());
-        Long[] currentCategoryListIds = new Long[categoryMovieList.size()];
-        for (CategoryMovie categoryMovie : categoryMovieList) {
-            currentCategoryListIds[categoryMovieList.indexOf(categoryMovie)] = categoryMovie.getCategory().getId();
+        if (!existedMovie.getOverview().equals(movieForm.getOverview())) {
+            existedMovie.setOverview(movieForm.getOverview());
         }
-        if (!Arrays.equals(currentCategoryListIds, movieForm.getCategoryListIds())) {
-            categoryMovieRepository.deleteAll(categoryMovieList);
-            categoryMovieList = new ArrayList<>();
-            for (Long categoryId : movieForm.getCategoryListIds()) {
-                Category category = categoryRepository.findById(categoryId).orElse(null);
-                if (category != null) {
-                    CategoryMovie categoryMovie = new CategoryMovie();
-                    categoryMovie.setCategory(category);
-                    categoryMovie.setMovie(movie);
-                    categoryMovieList.add(categoryMovie);
-
-                }
+        if(!existedMovie.getImagePath().equals(movieForm.getImagePath())){
+            existedMovie.setImagePath(movieForm.getImagePath());
+        }
+        if (!existedMovie.getPrice().equals(movieForm.getPrice())) {
+            existedMovie.setPrice(movieForm.getPrice());
+        }
+        movieMapper.updateMovie(movieForm, existedMovie);
+        Category category = categoryRepository.findById(movieForm.getCategoryId()).orElse(null);
+        if(category != null && category.getKind().equals(Constant.CATEGORY_KIND_MOVIE_TYPE)){
+            existedMovie.setCategory(category);
+        }
+        movieRepository.save(existedMovie);
+        List<MovieGenre> genresMovieList = new ArrayList<>();
+        for (Long genreId : movieForm.getGenreListIds()) {
+            Category genreCategory = categoryRepository.findById(genreId).orElse(null);
+            if (genreCategory != null && genreCategory.getKind().equals(Constant.CATEGORY_KIND_MOVIE_GENRE)) {
+                MovieGenre movieGenre = new MovieGenre();
+                movieGenre.setMovie(existedMovie);
+                movieGenre.setCategory(genreCategory);
+                genresMovieList.add(movieGenre);
             }
-            categoryMovieRepository.saveAll(categoryMovieList);
         }
-
-        movieMapper.updateMovie(movieForm, movie);
-        movieRepository.save(movie);
-        movie.setCategoryMovieList(categoryMovieList);
-        apiResponseDto.setData(movieMapper.toServerMovieDto(movie));
-        apiResponseDto.setMessage("Update movie successfully!");
+        if(!genresMovieList.isEmpty()){
+            movieGenreRepository.saveAll(genresMovieList);
+        }
+        apiResponseDto.setMessage("Movie has been updated successfully!");
+        apiResponseDto.setData(movieMapper.toServerMovieDto(existedMovie));
         return apiResponseDto;
     }
 }
