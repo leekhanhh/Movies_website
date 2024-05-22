@@ -1,13 +1,11 @@
 package com.ecommerce.website.movie.model.criteria;
 
+import com.ecommerce.website.movie.model.Category;
 import com.ecommerce.website.movie.model.Movie;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +17,8 @@ public class MovieCriteria implements Serializable {
     private Double price;
     private Double fromPrice;
     private Double toPrice;
+    private Long categoryId;
+    private Long movieGenreId;
     public Specification<Movie> getSpecification() {
         return new Specification<Movie>() {
             private static final long serialVersionUID = 1L;
@@ -39,6 +39,10 @@ public class MovieCriteria implements Serializable {
                 }
                 if (getToPrice() != null) {
                     predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("price"), getPrice()));
+                }
+                if(getCategoryId()!=null){
+                    Join<Movie, Category> joinCategory = root.join("category", JoinType.INNER);
+                    predicates.add(criteriaBuilder.equal(joinCategory.get("id"),getCategoryId()));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }

@@ -17,10 +17,10 @@ public interface UserMapper {
     User formCreateUserFormToEntity(CreateUserForm createUserForm);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "username", source = "account.username")
-    @Mapping(target = "email", source = "account.email")
-    @Mapping(target = "phone", source = "account.phone")
-    @Mapping(target = "avatarPath", source = "account.avatarPath")
+    @Mapping(target = "account.username", source = "account.username")
+    @Mapping(target = "account.email", source = "account.email")
+    @Mapping(target = "account.phone", source = "account.phone")
+    @Mapping(target = "account.avatarPath", source = "account.avatarPath")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "gender", source = "gender")
     @BeanMapping(ignoreByDefault = true)
@@ -28,13 +28,13 @@ public interface UserMapper {
     UserDto fromEntityToDtoForClient(User user);
 
     @Mapping(target = "id", source = "user.id")
-    @Mapping(target = "username", source = "account.username")
-    @Mapping(target = "email", source = "account.email")
-    @Mapping(target = "phone", source = "account.phone")
-    @Mapping(target = "avatarPath", source = "account.avatarPath")
+    @Mapping(target = "account.username", source = "account.username")
+    @Mapping(target = "account.email", source = "account.email")
+    @Mapping(target = "account.phone", source = "account.phone")
+    @Mapping(target = "account.avatarPath", source = "account.avatarPath")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "gender", source = "gender")
-    @Mapping(target = "role", source = "account.role")
+    @Mapping(target = "account.role", source = "account.role")
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "modifiedDate", source = "modifiedDate")
     @Mapping(target = "status", source = "status")
@@ -50,7 +50,7 @@ public interface UserMapper {
     @Named("fromEntityToDtoForServerList")
     List<UserDto> fromEntityToDtoForServerList(List<User> users);
 
-    @Mapping(target = "dateOfBirth", source = "dateOfBirth", dateFormat = "dd-MM-yyyy")
+    @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "gender", source = "gender")
     void updateUserFormToEntity(UpdateUserForm updateUserForm, @MappingTarget User user);
 }

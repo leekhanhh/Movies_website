@@ -15,6 +15,7 @@ public class CategoryCriteria implements Serializable {
     private String name;
     private Integer kind;
     private Long parentId;
+    private Integer status;
 
     public Specification<Category> categorySpecification() {
         return new Specification<Category>() {
@@ -37,6 +38,9 @@ public class CategoryCriteria implements Serializable {
                     predicateList.add(criteriaBuilder.equal(parentCategory.get("id"), getParentId()));
                 } else {
                     predicateList.add(criteriaBuilder.isNull(root.get("parentCategory")));
+                }
+                if (getStatus() != null) {
+                    predicateList.add(criteriaBuilder.equal(root.get("status"), getStatus()));
                 }
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }

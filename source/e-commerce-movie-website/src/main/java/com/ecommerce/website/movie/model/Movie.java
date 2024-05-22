@@ -9,6 +9,7 @@ import javax.persistence.EntityListeners;
 import javax.persistence.*;
 
 import javax.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,4 +25,9 @@ public class Movie extends Auditable<String> {
     private String overview;
     private Double price;
     private String imagePath;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<MovieGenre> genres = new ArrayList<>();
 }

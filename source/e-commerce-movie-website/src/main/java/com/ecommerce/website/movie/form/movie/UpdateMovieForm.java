@@ -25,5 +25,7 @@ public class UpdateMovieForm {
     @ApiModelProperty(value = "status", notes = "status can not be null!", example = "1")
     private Integer status;
     @ApiModelProperty(value = "category list ids", notes = "category list ids can not be null!", example = "[1,2]")
-    private Long[] categoryListIds;
+    private Long categoryId;
+    @ApiModelProperty(value = "genre list ids", notes = "genre list ids can not be null!", example = "[1,2]")
+    private Long[] genreListIds;
 }

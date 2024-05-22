@@ -5,6 +5,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 public class CreateMovieForm {
@@ -21,6 +22,9 @@ public class CreateMovieForm {
     @ApiModelProperty(value = "price", notes = "price can not be null!", example = "10.0")
     private Double price;
     @NotNull
-    @ApiModelProperty(value = "category list ids", notes = "category list ids can not be null!", example = "[1,2]")
-    private Long[] categoryListIds;
+    @ApiModelProperty(value = "category id", notes = "category id can not be null!", example = "[1,2]")
+    private Long categoryId;
+    @NotNull
+    @ApiModelProperty(value = "genre ids", notes = "genre ids can not be null!", example = "[1,2]")
+    private Long[] genreIds;
 }

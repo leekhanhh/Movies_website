@@ -21,6 +21,6 @@ public class CategoryKindImplementation implements ConstraintValidator<CategoryK
             return true;
         }
         return Objects.equals(categoryKind, Constant.CATEGORY_KIND_MOVIE_GENRE) ||
-                Objects.equals(categoryKind, Constant.CATEGORY_KIND_MOVIE_SERVICE);
+                Objects.equals(categoryKind, Constant.CATEGORY_KIND_MOVIE_TYPE);
     }
 }

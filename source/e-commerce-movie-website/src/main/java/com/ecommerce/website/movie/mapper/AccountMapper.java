@@ -12,7 +12,6 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AccountMapper {
     @Mapping(target = "email", source = "email")
-    @Mapping(target = "password", source = "password")
     @Mapping(target = "username", source = "username")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "avatarPath", source = "avatarPath")
@@ -46,7 +45,7 @@ public interface AccountMapper {
     @Named("fromEntityToDtoListForServer")
     List<AccountDto> fromEntityToDtoListForServer(List<Account> accounts);
 
-    @IterableMapping(qualifiedByName = "fromAccountEntityToDtoForClient", elementTargetType = AccountDto.class)
+    @IterableMapping(qualifiedByName = "fromAccountEntityToDtoForServer", elementTargetType = AccountDto.class)
     @Named("fromEntityToDtoListForClient")
     List<AccountDto> fromEntityToDtoListForClient(List<Account> accounts);
 
@@ -54,7 +53,6 @@ public interface AccountMapper {
     @Mapping(target = "avatarPath", source = "avatarPath")
     @Mapping(target = "username", source = "username")
     @Mapping(target = "phone", source = "phone")
-    @Mapping(target = "password", source = "password")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromUpdateAccountEntityToDto")
     void fromUpdateAccountEntityToDto(UpdateAccountForm updateAccountForm, @MappingTarget Account account);
