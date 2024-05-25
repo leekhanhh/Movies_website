@@ -46,8 +46,8 @@ public class AccountController {
             apiResponseDto.setMessage("Duplicated Email Error");
             return apiResponseDto;
         }
-        accountMapper.fromCreateAccountToDto(createAccountForm);
-        account.setPassword(createAccountForm.getPassword());
+        account = accountMapper.fromCreateAccountToDto(createAccountForm);
+        account.setPassword(passwordEncoder.encode(createAccountForm.getPassword()));
         account.setRole(Constant.ROLE_ADMIN);
         accountRepository.save(account);
         apiResponseDto.setMessage("Account has been saved successfully!");

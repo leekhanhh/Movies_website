@@ -29,10 +29,18 @@ public class ErrorCode {
     public static final String ACCOUNT_EMAIL_DUPLICATED = "ERROR-ACCOUNT-000";
     public static final String ACCOUNT_EMAIL_NOT_FOUND = "ERROR-ACCOUNT-001";
     public static final String ACCOUNT_NOT_FOUND = "ERROR-ACCOUNT-002";
+    public static final String ACCOUNT_CREATION_FAILED = "ERROR-ACCOUNT-003";
 
     public static final String USER_ACCOUNT_NOT_FOUND = "ERROR-ACCOUNT-003";
+
+    /**
+     * User error code
+     */
+    public static final String USER_CREATION_FAILED = "ERROR-USER-000";
+
     /**
      * Movie genre error code
      */
     public static final String MOVIE_GENRE_NOT_FOUND = "ERROR-GENRE-000";
+
 }

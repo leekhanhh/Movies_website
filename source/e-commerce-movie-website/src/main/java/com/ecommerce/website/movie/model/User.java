@@ -7,7 +7,6 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Data
 @Entity
@@ -18,7 +17,7 @@ public class User extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
-    Date dateOfBirth;
+    String dateOfBirth;
     Integer gender;
     @MapsId
     @OneToOne(fetch = FetchType.EAGER)

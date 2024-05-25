@@ -11,8 +11,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AccountMapper {
-    @Mapping(target = "email", source = "email")
     @Mapping(target = "username", source = "username")
+    @Mapping(target = "email", source = "email")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "avatarPath", source = "avatarPath")
     @BeanMapping(ignoreByDefault = true)
@@ -20,13 +20,13 @@ public interface AccountMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "email", source = "email")
-    @Mapping(target = "role", source = "role")
     @Mapping(target = "username", source = "username")
+    @Mapping(target = "role", source = "role")
     @Mapping(target = "phone", source = "phone")
+    @Mapping(target = "avatarPath", source = "avatarPath")
     @Mapping(target = "lastLogin", source = "lastLogin")
     @Mapping(target = "createdDate", source = "createdDate")
     @Mapping(target = "modifiedDate", source = "modifiedDate")
-    @Mapping(target = "avatarPath", source = "avatarPath")
     @Named("fromAccountEntityToDtoForServer")
     @BeanMapping(ignoreByDefault = true)
     AccountDto fromAccountEntityToDtoForServer(Account account);

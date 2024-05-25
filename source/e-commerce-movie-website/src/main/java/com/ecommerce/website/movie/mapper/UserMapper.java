@@ -9,8 +9,10 @@ import org.mapstruct.*;
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = {AccountMapper.class})
 public interface UserMapper {
+    @Mapping(source = "accountId", target = "account.id")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "gender", source = "gender")
     @BeanMapping(ignoreByDefault = true)

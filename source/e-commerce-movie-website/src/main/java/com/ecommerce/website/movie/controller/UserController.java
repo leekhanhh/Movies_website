@@ -51,27 +51,47 @@ public class UserController {
     @Autowired
     AccountMapper accountMapper;
 
-    @PostMapping(value = "/create", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/register", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> createUser(@Valid @RequestBody CreateUserForm createUserForm, CreateAccountForm createAccountForm, BindingResult bindingResult){
+    public ApiResponseDto<Long> createUser(@Valid @RequestBody CreateUserForm createUserForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
-        Account account = accountRepository.findFirstByEmail(createAccountForm.getEmail());
-        if (account != null) {
+        Long accountId = createUserForm.getAccountId();
+        Account existingAccount = accountRepository.findById(accountId).orElse(null);
+        if (existingAccount == null) {
             apiResponseDto.setResult(false);
-            apiResponseDto.setCode(ErrorCode.ACCOUNT_EMAIL_DUPLICATED);
-            apiResponseDto.setMessage("Duplicated Email Account Error");
+            apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);
+            apiResponseDto.setMessage("Account not found");
             return apiResponseDto;
         }
-        account = accountMapper.fromCreateAccountToDto(createAccountForm);
-        account.setPassword(passwordEncoder.encode(createAccountForm.getPassword()));
-        account.setRole(Constant.ROLE_USER);
-        accountRepository.save(account);
+
+        Account newAccount = accountRepository.getOne(accountId);
+        newAccount.setRole(Constant.ROLE_USER);
+        newAccount = accountRepository.save(newAccount);
+        if (newAccount == null || newAccount.getId() == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.USER_CREATION_FAILED);
+            apiResponseDto.setMessage("Failed to create user");
+            return apiResponseDto;
+        }
+
         User user = userMapper.formCreateUserFormToEntity(createUserForm);
-        user.setAccount(account);
-        userRepository.save(user);
+        user.setAccount(newAccount);
+        user = userRepository.save(user);
+
+        if (user == null || user.getId() == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.USER_CREATION_FAILED);
+            apiResponseDto.setMessage("Failed to create user");
+            return apiResponseDto;
+        }
+
+        apiResponseDto.setResult(true);
         apiResponseDto.setMessage("User has been saved successfully!");
+        apiResponseDto.setData(user.getId());
+
         return apiResponseDto;
     }
+
 
     @PutMapping(value = "/update", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -93,7 +113,7 @@ public class UserController {
         return apiResponseDto;
     }
 
-    @PostMapping(value = "/delete", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/delete", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ApiResponseDto<Long> deleteUser(@Valid @RequestBody Long id){
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();

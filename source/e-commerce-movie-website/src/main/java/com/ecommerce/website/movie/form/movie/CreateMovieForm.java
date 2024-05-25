@@ -22,7 +22,7 @@ public class CreateMovieForm {
     @ApiModelProperty(value = "price", notes = "price can not be null!", example = "10.0")
     private Double price;
     @NotNull
-    @ApiModelProperty(value = "category id", notes = "category id can not be null!", example = "[1,2]")
+    @ApiModelProperty(value = "category id", notes = "category id can not be null!", example = "1")
     private Long categoryId;
     @NotNull
     @ApiModelProperty(value = "genre ids", notes = "genre ids can not be null!", example = "[1,2]")

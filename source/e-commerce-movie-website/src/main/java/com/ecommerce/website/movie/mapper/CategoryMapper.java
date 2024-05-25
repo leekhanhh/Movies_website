@@ -18,7 +18,6 @@ public interface CategoryMapper {
     @BeanMapping(ignoreByDefault = true)
     Category formCreateCategory(CreateCategoryForm categoryForm);
 
-    // Response cho doi tuong muon tra ve api ntn
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
@@ -28,6 +27,7 @@ public interface CategoryMapper {
     @Mapping(source = "modifiedDate", target = "modifiedDate")
     @Mapping(source = "status", target = "status")
     @BeanMapping(ignoreByDefault = true)
+    @Named("toCategoryDto")
     CategoryDto toCategoryDto(Category category);
 
     @Mapping(source = "id", target = "id")

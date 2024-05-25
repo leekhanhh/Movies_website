@@ -19,7 +19,7 @@ public class CreateAccountForm {
     private String email;
     @ApiModelProperty(value = "Phone", example = "0123456789")
     private String phone;
-    @ApiModelProperty(value = "role", example = "user")
+    @ApiModelProperty(value = "role", example = "0")
     private Integer role;
     @ApiModelProperty(value = "Avatar", example = "http://avatar.jpg")
     private String avatarPath;

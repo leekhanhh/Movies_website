@@ -32,7 +32,7 @@ public class AccountCriteria implements Serializable {
                     predicates.add(criteriaBuilder.equal(root.get("id"), getId()));
                 }
                 if (getUsername() != null) {
-                    predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("userName")), "%" + getUsername().toLowerCase() + "%"));
+                    predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("username")), "%" + getUsername().toLowerCase() + "%"));
                 }
                 if (getEmail() != null) {
                     predicates.add(criteriaBuilder.like(root.get("email"), "%" + getEmail() + "%"));

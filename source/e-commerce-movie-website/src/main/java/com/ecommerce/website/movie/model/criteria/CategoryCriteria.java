@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.model.criteria;
 
+import com.ecommerce.website.movie.constant.Constant;
 import com.ecommerce.website.movie.model.Category;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,6 +42,14 @@ public class CategoryCriteria implements Serializable {
                 }
                 if (getStatus() != null) {
                     predicateList.add(criteriaBuilder.equal(root.get("status"), getStatus()));
+                }
+                if (getParentId() != null) {
+                    Join<Category, Category> parentCategory = root.join("parentCategory", JoinType.INNER);
+                    predicateList.add(criteriaBuilder.equal(parentCategory.get("id"), getParentId()));
+                } else {
+                    if (getKind() != null && !getKind().equals(Constant.CATEGORY_KIND_MOVIE_GENRE)) {
+                        predicateList.add(criteriaBuilder.isNull(root.get("parentCategory")));
+                    }
                 }
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }
