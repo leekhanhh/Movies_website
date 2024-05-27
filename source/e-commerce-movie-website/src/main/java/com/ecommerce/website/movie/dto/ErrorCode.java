@@ -43,4 +43,26 @@ public class ErrorCode {
      */
     public static final String MOVIE_GENRE_NOT_FOUND = "ERROR-GENRE-000";
 
+    /**
+     * Favorite item error code
+     */
+    public static final String FAVORITE_ITEM_NOT_FOUND = "ERROR-FAVORITE-000";
+    public static final String FAVORITE_ITEM_ALREADY_EXIST = "ERROR-FAVORITE-001";
+
+    /**
+     * Review error code
+     */
+    public static final String REVIEW_NOT_FOUND = "ERROR-REVIEW-000";
+
+    /**
+     * Vote movie error code
+     */
+    public static final String VOTE_MOVIE_EXIST = "ERROR-VOTE-MOVIE-000";
+    public static final String VOTE_MOVIE_NOT_FOUND = "ERROR-VOTE-MOVIE-001";
+
+    /**
+     * Rating error code
+     */
+    public static final String RATING_ALREADY_EXIST = "ERROR-RATING-000";
+    public static final String RATING_NOT_FOUND = "ERROR-RATING-001";
 }

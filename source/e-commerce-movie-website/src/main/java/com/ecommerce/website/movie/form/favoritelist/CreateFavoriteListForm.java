@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotNull;
 
 @Data
-public class CreateFavoriteList {
+public class CreateFavoriteListForm {
     @ApiModelProperty(value = "movie id", notes = "movie id can not be null!", example = "1")
     @NotNull
     private Long movieId;

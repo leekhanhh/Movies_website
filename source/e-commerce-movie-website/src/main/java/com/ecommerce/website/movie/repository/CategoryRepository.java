@@ -10,6 +10,7 @@ import java.util.List;
 
 public interface CategoryRepository extends JpaRepository<Category,Long>, JpaSpecificationExecutor<Category> {
     Category findFirstByName(String name);
-    @Query("SELECT c.id FROM Category c WHERE c.kind = :kind")
-    List<Long> findAllByKind(@Param("kind") Integer kind);
+    @Query("SELECT c.id, c.name FROM Category c WHERE c.kind = :kind")
+    List<Object[]> findAllByKind(@Param("kind") Integer kind);
+
 }

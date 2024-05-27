@@ -6,11 +6,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import java.util.Date;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class UpdateUserForm {
+    @NotNull
+    @ApiModelProperty(value = "User id", required = true)
+    private Long id;
     @ApiModelProperty(value = "User date of birth", required = true)
     @JsonFormat(pattern = Constant.DATE_FORMAT)
     String dateOfBirth;

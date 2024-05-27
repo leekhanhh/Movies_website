@@ -11,7 +11,6 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CategoryMapper {
-    // Set thuoc tinh cho luc tao doi tuong moi
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "kind", target = "kind")
@@ -55,6 +54,7 @@ public interface CategoryMapper {
 
     @IterableMapping(elementTargetType = CategoryDto.class, qualifiedByName = "adminMappingDto")
     List<CategoryDto> toCategoryList(List<Category> categoryList);
+
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")

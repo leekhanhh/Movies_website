@@ -95,9 +95,9 @@ public class UserController {
 
     @PutMapping(value = "/update", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> updateUser(@Valid @RequestBody UpdateUserForm updateUserForm, UpdateAccountForm updateAccountForm, BindingResult bindingResult){
+    public ApiResponseDto<Long> updateUser(@Valid @RequestBody UpdateUserForm updateUserForm, BindingResult bindingResult){
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
-        Account account = accountRepository.findById(updateAccountForm.getId()).orElse(null);
+        Account account = accountRepository.findById(updateUserForm.getId()).orElse(null);
         User user = userRepository.findById(account.getId()).orElse(null);
         if (account == null) {
             apiResponseDto.setResult(false);
@@ -105,7 +105,6 @@ public class UserController {
             apiResponseDto.setMessage("User not found");
             return apiResponseDto;
         }
-        accountMapper.fromUpdateAccountEntityToDto(updateAccountForm, account);
         userMapper.updateUserFormToEntity(updateUserForm, user);
         userRepository.save(user);
         apiResponseDto.setMessage("User has been updated successfully!");

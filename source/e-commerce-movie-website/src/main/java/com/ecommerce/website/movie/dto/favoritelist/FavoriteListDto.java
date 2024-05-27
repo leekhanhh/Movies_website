@@ -14,5 +14,5 @@ public class FavoriteListDto {
     Long id;
     AccountDto account;
     MovieDto movie;
-//    List<Long> movieIds;
+//    List<Long> movieIds;b
 }
