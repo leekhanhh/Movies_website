@@ -155,7 +155,7 @@ public class ReviewController {
             return apiResponseDto;
         }
         ResponseListDto<ReviewDto> responseListDto = new ResponseListDto(
-                reviewMapper.fromReviewEntityListToDtoList(reviewPage.getContent()),
+                reviewMapper.fromReviewEntityListToDtoListByAccount(reviewPage.getContent()),
                 reviewPage.getTotalElements(),
                 reviewPage.getTotalPages());
 

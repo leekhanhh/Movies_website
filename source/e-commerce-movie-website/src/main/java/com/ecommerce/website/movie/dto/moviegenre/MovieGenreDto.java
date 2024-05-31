@@ -6,4 +6,5 @@ import lombok.Data;
 public class MovieGenreDto {
     Long movieId;
     Long categoryId;
+    String categoryName;
 }

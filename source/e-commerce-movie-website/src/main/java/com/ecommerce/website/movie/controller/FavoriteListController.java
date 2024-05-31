@@ -4,6 +4,7 @@ import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
 import com.ecommerce.website.movie.dto.favoritelist.FavoriteListDto;
+import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.form.favoritelist.CreateFavoriteListForm;
 import com.ecommerce.website.movie.mapper.FavoriteListMapper;
 import com.ecommerce.website.movie.model.Account;
@@ -97,6 +98,15 @@ public class FavoriteListController {
         ApiResponseDto<ResponseListDto<FavoriteListDto>> apiResponseDto = new ApiResponseDto<>();
         Page<FavoriteList> favoriteListPage = favoriteListRepository.findAll(favoriteListCriteria.getSpecification(), pageable);
         ResponseListDto<FavoriteListDto> responseListDto = new ResponseListDto(favoriteListMapper.toDtoList(favoriteListPage.getContent()), favoriteListPage.getTotalElements(), favoriteListPage.getTotalPages());
+        apiResponseDto.setData(responseListDto);
+        return apiResponseDto;
+    }
+
+    @GetMapping(value = "/list-movie", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<MovieDto>> listMovie(FavoriteListCriteria favoriteListCriteria, Pageable pageable) {
+        ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        Page<FavoriteList> favoriteListPage = favoriteListRepository.findAll(favoriteListCriteria.getSpecification(), pageable);
+        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(favoriteListMapper.toMovieDtoList(favoriteListPage.getContent()), favoriteListPage.getTotalElements(), favoriteListPage.getTotalPages());
         apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }

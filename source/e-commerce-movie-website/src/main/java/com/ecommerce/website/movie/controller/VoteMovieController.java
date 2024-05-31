@@ -3,6 +3,7 @@ package com.ecommerce.website.movie.controller;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
+import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.dto.votemovie.VoteMovieDto;
 import com.ecommerce.website.movie.mapper.VoteMovieMapper;
 import com.ecommerce.website.movie.model.Account;
@@ -19,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @org.springframework.web.bind.annotation.RestController
 @org.springframework.web.bind.annotation.RequestMapping("/v1/vote-movie")
@@ -36,7 +40,7 @@ public class VoteMovieController {
 
     @PostMapping(value = "/create-vote", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> createVoteMovie(@org.springframework.web.bind.annotation.RequestBody com.ecommerce.website.movie.form.votemovie.CreateVoteMovieForm createVoteMovieForm, org.springframework.validation.BindingResult bindingResult) {
+    public ApiResponseDto<Long> createVoteMovie(@Valid @org.springframework.web.bind.annotation.RequestBody com.ecommerce.website.movie.form.votemovie.CreateVoteMovieForm createVoteMovieForm, org.springframework.validation.BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new com.ecommerce.website.movie.dto.ApiResponseDto<>();
         Movie movie = movieRepository.findById(createVoteMovieForm.getMovieId()).orElse(null);
         if (movie == null) {
@@ -58,9 +62,7 @@ public class VoteMovieController {
             apiResponseDto.setMessage("Vote movie exist!");
             return apiResponseDto;
         }
-        VoteMovie voteMovie = new VoteMovie();
-        voteMovie.setMovie(movie);
-        voteMovie.setAccount(account);
+        VoteMovie voteMovie = voteMovieMapper.fromCreateVoteMovieForm(createVoteMovieForm);
         voteMovieRepository.save(voteMovie);
         apiResponseDto.setResult(true);
         apiResponseDto.setData(voteMovie.getId());
@@ -93,4 +95,20 @@ public class VoteMovieController {
         return apiResponseDto;
     }
 
+    @GetMapping(value="/list-vote-movie", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<MovieDto>> listMovie(VoteMovieCriteria voteMovieCriteria, Pageable pageable){
+        ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        Page<VoteMovie> voteMoviePage = voteMovieRepository.findAll(voteMovieCriteria.getSpecification(), pageable);
+        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(voteMovieMapper.toMovieDtoList(voteMoviePage.getContent()), voteMoviePage.getTotalElements(), voteMoviePage.getTotalPages());
+        apiResponseDto.setData(responseListDto);
+        return apiResponseDto;
+    }
+    @GetMapping(value = "/list-vote/{accountId}", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<VoteMovieDto>> getVoteMovie(@PathVariable Long accountId, Pageable pageable){
+        ApiResponseDto<ResponseListDto<VoteMovieDto>> apiResponseDto = new ApiResponseDto<>();
+        Page<VoteMovie> voteMovieList = voteMovieRepository.findAllByAccountId(accountId, pageable);
+        ResponseListDto<VoteMovieDto> responseListDto = new ResponseListDto(voteMovieMapper.toMovieDtoList(voteMovieList.getContent()), voteMovieList.getTotalElements(), voteMovieList.getTotalPages());
+        apiResponseDto.setData(responseListDto);
+        return apiResponseDto;
+    }
 }

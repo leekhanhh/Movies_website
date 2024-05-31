@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class VoteMovieDto extends BaseInfo {
-    MovieDto movie;
     AccountDto account;
+    MovieDto movie;
 }

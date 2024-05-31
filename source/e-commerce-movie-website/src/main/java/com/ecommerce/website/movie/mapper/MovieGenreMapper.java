@@ -11,6 +11,7 @@ import java.util.List;
 public interface MovieGenreMapper {
     @Mapping(source = "movie.id", target = "movieId")
     @Mapping(source = "category.id", target = "categoryId")
+    @Mapping(source = "category.name", target = "categoryName")
     @Named("toMovieGenreDto")
     MovieGenreDto toMovieGenreDto(MovieGenre movieGenre);
 

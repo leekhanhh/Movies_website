@@ -5,6 +5,8 @@ public class ErrorCode {
      * General error code
      */
     public static final String GENERAL_ERROR_UNAUTHORIZED = "ERROR-GENERAL-000";
+    public static final String GENERAL_ERROR_FORBIDDEN = "ERROR-GENERAL-001";
+    public static final String GENERAL_ERROR_BAD_REQUEST = "ERROR-GENERAL-002";
 
     /**
      * Category error code
@@ -37,6 +39,7 @@ public class ErrorCode {
      * User error code
      */
     public static final String USER_CREATION_FAILED = "ERROR-USER-000";
+    public static final String USER_ACCOUNT_EXIST = "ERROR-USER-001";
 
     /**
      * Movie genre error code

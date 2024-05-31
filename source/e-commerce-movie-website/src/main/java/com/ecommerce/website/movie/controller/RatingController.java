@@ -17,7 +17,6 @@ import com.ecommerce.website.movie.repository.RatingRepository;
 import com.ecommerce.website.movie.service.RatingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -150,4 +150,30 @@ public class RatingController {
         apiResponseDto.setMessage("Get rating list successfully!");
         return apiResponseDto;
     }
+
+    @GetMapping(value = "/list-recommending-movie", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<RatingDto>> listRecommendingMovie(RatingCriteria ratingCriteria, Pageable pageable){
+        ApiResponseDto<ResponseListDto<RatingDto>> apiResponseDto = new ApiResponseDto<>();
+        Page<Rating> ratingPage = ratingRepository.findAll(ratingCriteria.getSpecification(), pageable);
+        List<Rating> ratingList = ratingRepository.findAll();
+        if(ratingPage.isEmpty()){
+            apiResponseDto.setMessage("No rating found!");
+            return apiResponseDto;
+        }
+        for(Rating rating : ratingList){
+            if(rating.getEvaluation() < 3.5) ratingList.remove(rating);
+        }
+        if (ratingPage.isEmpty()){
+            apiResponseDto.setMessage("No recommending movie found!");
+            return apiResponseDto;
+        }
+
+        ratingList.sort((rating1, rating2) -> rating2.getEvaluation().compareTo(rating1.getEvaluation()));
+
+        ResponseListDto<RatingDto> ratingDtoList =  new ResponseListDto(ratingMapper.toRatingDtoList(ratingList), ratingPage.getTotalElements(), ratingPage.getTotalPages());
+        apiResponseDto.setData(ratingDtoList);
+        apiResponseDto.setMessage("Get rating list successfully!");
+        return apiResponseDto;
+    }
+
 }
