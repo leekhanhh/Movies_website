@@ -46,11 +46,11 @@ public class Account extends Auditable<String> implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        String accountRole = "USER";
+        Integer accountRole = 1;
         if (Objects.equals(this.getRole(), Constant.ROLE_ADMIN)) {
-            accountRole = "ADMIN";
+            accountRole = 0;
         }
-        authorities.add(new SimpleGrantedAuthority(accountRole));
+        authorities.add(new SimpleGrantedAuthority(accountRole.toString()));
         return authorities;
     }
 

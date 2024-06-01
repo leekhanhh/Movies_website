@@ -1,6 +1,7 @@
 package com.ecommerce.website.movie.mapper;
 
 import com.ecommerce.website.movie.dto.user.UserDto;
+import com.ecommerce.website.movie.form.account.CreateAccountForm;
 import com.ecommerce.website.movie.form.user.CreateUserForm;
 import com.ecommerce.website.movie.form.user.UpdateUserForm;
 import com.ecommerce.website.movie.model.User;
@@ -12,11 +13,13 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {AccountMapper.class})
 public interface UserMapper {
-    @Mapping(source = "accountId", target = "account.id")
+    @Mapping(source = "username", target = "account.username")
+    @Mapping(source = "email", target = "account.email")
+    @Mapping(source = "phone", target = "account.phone")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "gender", source = "gender")
     @BeanMapping(ignoreByDefault = true)
-    User formCreateUserFormToEntity(CreateUserForm createUserForm);
+    User  formCreateUserFormToEntity(CreateUserForm createUserForm);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "account.username", source = "account.username")

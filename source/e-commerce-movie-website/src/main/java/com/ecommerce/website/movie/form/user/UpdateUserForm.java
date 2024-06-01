@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
@@ -17,7 +18,7 @@ public class UpdateUserForm {
     private Long id;
     @ApiModelProperty(value = "User date of birth", required = true)
     @JsonFormat(pattern = Constant.DATE_FORMAT)
-    String dateOfBirth;
+    Date dateOfBirth;
     @ApiModelProperty(value = "User gender")
     @Gender(message = "Gender must be 1 (Male) or 0 (Female)", allowNull = true)
     Integer gender;

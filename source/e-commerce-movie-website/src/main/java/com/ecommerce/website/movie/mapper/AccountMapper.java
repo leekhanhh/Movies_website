@@ -3,6 +3,7 @@ package com.ecommerce.website.movie.mapper;
 import com.ecommerce.website.movie.dto.account.AccountDto;
 import com.ecommerce.website.movie.form.account.CreateAccountForm;
 import com.ecommerce.website.movie.form.account.UpdateAccountForm;
+import com.ecommerce.website.movie.form.user.CreateUserForm;
 import com.ecommerce.website.movie.model.Account;
 import org.mapstruct.*;
 
@@ -17,6 +18,13 @@ public interface AccountMapper {
     @Mapping(target = "avatarPath", source = "avatarPath")
     @BeanMapping(ignoreByDefault = true)
     Account fromCreateAccountToDto(CreateAccountForm createAccountForm);
+
+    @Mapping(target = "username", source = "username")
+    @Mapping(target = "email", source = "email")
+    @Mapping(target = "phone", source = "phone")
+    @Mapping(target = "avatarPath", source = "avatarPath")
+    @BeanMapping(ignoreByDefault = true)
+    Account fromCreateAccountForUser(CreateUserForm createAccountForm);
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "email", source = "email")

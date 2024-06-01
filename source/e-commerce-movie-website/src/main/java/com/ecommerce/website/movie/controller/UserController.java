@@ -55,35 +55,22 @@ public class UserController {
     @Transactional
     public ApiResponseDto<Long> createUser(@Valid @RequestBody CreateUserForm createUserForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
-        Long accountId = createUserForm.getAccountId();
-        Account existingAccount = accountRepository.findById(accountId).orElse(null);
-        if (existingAccount == null) {
+        Account existingAccount = accountRepository.findFirstByEmail(createUserForm.getEmail());
+        if(existingAccount != null){
             apiResponseDto.setResult(false);
-            apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);
-            apiResponseDto.setMessage("Account not found");
+            apiResponseDto.setCode(ErrorCode.ACCOUNT_EMAIL_DUPLICATED);
+            apiResponseDto.setMessage("Duplicated Email Error");
             return apiResponseDto;
         }
 
-        Account newAccount = accountRepository.getOne(accountId);
+        Account newAccount = accountMapper.fromCreateAccountForUser(createUserForm);
+        newAccount.setPassword(passwordEncoder.encode(createUserForm.getPassword()));
         newAccount.setRole(Constant.ROLE_USER);
-        newAccount = accountRepository.save(newAccount);
-        if (newAccount == null || newAccount.getId() == null) {
-            apiResponseDto.setResult(false);
-            apiResponseDto.setCode(ErrorCode.USER_CREATION_FAILED);
-            apiResponseDto.setMessage("Failed to create user");
-            return apiResponseDto;
-        }
+        accountRepository.save(newAccount);
 
         User user = userMapper.formCreateUserFormToEntity(createUserForm);
         user.setAccount(newAccount);
-        user = userRepository.save(user);
-
-        if (user == null || user.getId() == null) {
-            apiResponseDto.setResult(false);
-            apiResponseDto.setCode(ErrorCode.USER_CREATION_FAILED);
-            apiResponseDto.setMessage("Failed to create user");
-            return apiResponseDto;
-        }
+        userRepository.save(user);
 
         apiResponseDto.setResult(true);
         apiResponseDto.setMessage("User has been saved successfully!");
