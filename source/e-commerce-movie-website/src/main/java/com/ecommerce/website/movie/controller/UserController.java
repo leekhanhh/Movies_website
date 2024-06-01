@@ -39,7 +39,7 @@ import static org.checkerframework.checker.nullness.Opt.orElse;
 @org.springframework.web.bind.annotation.RequestMapping("/v1/user")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
-public class UserController {
+public class UserController extends BaseController{
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -130,6 +130,21 @@ public class UserController {
     public ApiResponseDto<UserDto> getUser(@PathVariable("id") Long id){
         ApiResponseDto<UserDto> apiResponseDto = new ApiResponseDto<>();
         User user = userRepository.findById(id).orElse(null);
+        if (user == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);
+            apiResponseDto.setMessage("User not found");
+            return apiResponseDto;
+        }
+        apiResponseDto.setData(userMapper.fromEntityToDtoForClient(user));
+        apiResponseDto.setMessage("Get user successfully!");
+        return apiResponseDto;
+    }
+
+    @GetMapping(value = "/my-profile", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<UserDto> myProfile(){
+        ApiResponseDto<UserDto> apiResponseDto = new ApiResponseDto<>();
+        User user = userRepository.findById(getCurrentUser()).orElse(null);
         if (user == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);

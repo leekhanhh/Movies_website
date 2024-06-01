@@ -19,7 +19,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 
 @RequestMapping("/auth")
@@ -40,8 +39,7 @@ public class AuthenticationController {
     @Autowired
     UserRepository userRepository;
 
-    @PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Transactional
+    @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<AuthenticationDto> login(@RequestBody LoginDto loginDto) {
         ApiResponseDto<AuthenticationDto> apiResponseDto = new ApiResponseDto<>();
         try {

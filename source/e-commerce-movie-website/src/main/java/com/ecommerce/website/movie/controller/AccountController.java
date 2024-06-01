@@ -9,6 +9,7 @@ import com.ecommerce.website.movie.form.account.CreateAccountForm;
 import com.ecommerce.website.movie.form.account.UpdateAccountForm;
 import com.ecommerce.website.movie.mapper.AccountMapper;
 import com.ecommerce.website.movie.model.Account;
+import com.ecommerce.website.movie.model.User;
 import com.ecommerce.website.movie.model.criteria.AccountCriteria;
 import com.ecommerce.website.movie.repository.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -32,7 +34,7 @@ import java.util.List;
 @RequestMapping("/v1/account")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
-public class AccountController {
+public class AccountController extends BaseController{
     @Autowired
     AccountMapper accountMapper;
     @Autowired
@@ -42,7 +44,7 @@ public class AccountController {
 
     @PostMapping(value = "/create-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> createAccount(@Valid @RequestBody CreateAccountForm createAccountForm, BindingResult bindingResult){
+    public ApiResponseDto<Long> createAccount(@Valid @RequestBody CreateAccountForm createAccountForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
         Account account = accountRepository.findFirstByEmail(createAccountForm.getEmail());
         if (account != null) {
@@ -62,7 +64,7 @@ public class AccountController {
 
     @PutMapping(value = "/update-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> updateAccount(@Valid @RequestBody UpdateAccountForm updateAccountForm, BindingResult bindingResult){
+    public ApiResponseDto<Long> updateAccount(@Valid @RequestBody UpdateAccountForm updateAccountForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
         Account account = accountRepository.findById(updateAccountForm.getId()).orElse(null);
         if (account == null) {
@@ -79,7 +81,7 @@ public class AccountController {
 
     @DeleteMapping(value = "/delete-admin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> deleteAccount(@PathVariable Long id){
+    public ApiResponseDto<Long> deleteAccount(@PathVariable Long id) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
         Account account = accountRepository.findById(id).orElse(null);
         if (account == null) {
@@ -94,7 +96,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/list-admin", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponseDto<ResponseListDto<AccountDto>> listAccount(AccountCriteria accountCriteria, Pageable pageable){
+    public ApiResponseDto<ResponseListDto<AccountDto>> listAccount(AccountCriteria accountCriteria, Pageable pageable) {
         ApiResponseDto<ResponseListDto<AccountDto>> apiResponseDto = new ApiResponseDto<>();
         Page<Account> accountPage = accountRepository.findAll(accountCriteria.getSpecification(), pageable);
         ResponseListDto<AccountDto> responseListDto = new ResponseListDto(accountMapper.fromEntityToDtoListForServer(accountPage.getContent()), accountPage.getTotalElements(), accountPage.getTotalPages());
@@ -104,7 +106,7 @@ public class AccountController {
     }
 
     @GetMapping(value = "/get-admin/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponseDto<AccountDto> getAccount(@PathVariable Long id){
+    public ApiResponseDto<AccountDto> getAccount(@PathVariable Long id) {
         ApiResponseDto<AccountDto> apiResponseDto = new ApiResponseDto<>();
         Account account = accountRepository.findById(id).orElse(null);
         if (account != null) {
@@ -117,18 +119,18 @@ public class AccountController {
         return apiResponseDto;
     }
 
-    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Account> authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        Account currentUser = (Account) authentication.getPrincipal();
-
-        return ResponseEntity.ok(currentUser);
-    }
-
-    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Account>> allUsers() {
-        List<Account> users = accountRepository.findAll();
-        return ResponseEntity.ok(users);
+    @GetMapping(value = "/my-profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<AccountDto> getMyProfile() {
+        ApiResponseDto<AccountDto> apiResponseDto = new ApiResponseDto<>();
+        Account account = accountRepository.findById(getCurrentUser()).orElse(null);
+        if (account == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);
+            apiResponseDto.setMessage("User not found");
+            return apiResponseDto;
+        }
+        apiResponseDto.setData(accountMapper.fromEntityToDtoForClient(account));
+        apiResponseDto.setMessage("Get account successfully!");
+        return apiResponseDto;
     }
 }
