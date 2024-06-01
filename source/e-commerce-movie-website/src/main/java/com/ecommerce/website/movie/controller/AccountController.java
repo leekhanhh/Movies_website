@@ -15,6 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/account")
@@ -51,6 +56,7 @@ public class AccountController {
         account.setRole(Constant.ROLE_ADMIN);
         accountRepository.save(account);
         apiResponseDto.setMessage("Account has been saved successfully!");
+        apiResponseDto.setData(account.getId());
         return apiResponseDto;
     }
 
@@ -109,5 +115,20 @@ public class AccountController {
             apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
         }
         return apiResponseDto;
+    }
+
+    @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Account> authenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        Account currentUser = (Account) authentication.getPrincipal();
+
+        return ResponseEntity.ok(currentUser);
+    }
+
+    @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Account>> allUsers() {
+        List<Account> users = accountRepository.findAll();
+        return ResponseEntity.ok(users);
     }
 }

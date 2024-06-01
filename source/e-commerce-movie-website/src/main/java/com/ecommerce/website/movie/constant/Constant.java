@@ -4,11 +4,11 @@ public class Constant {
     public static final Integer CATEGORY_KIND_MOVIE_GENRE = 1;
     public static final Integer CATEGORY_KIND_MOVIE_TYPE = 0;
 
-//    RestClientConfig
+    //RestClientConfig
     public static final String DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm:ss";
     public static final String DATE_FORMAT = "dd/MM/yyyy";
 
-//    Person kind
+    //Person kind
     public static final Integer PERSON_KIND_ACTOR = 1;
     public static final Integer PERSON_KIND_DIRECTOR = 0;
 
@@ -19,9 +19,7 @@ public class Constant {
     public static final Integer MALE = 1;
     public static final Integer FEMALE = 0;
 
-    /**
-     * Status constant
-     */
+    //Status constant
     public static final Integer STATUS_ACTIVE = 1;
     public static final Integer STATUS_PENDING = 0;
 }

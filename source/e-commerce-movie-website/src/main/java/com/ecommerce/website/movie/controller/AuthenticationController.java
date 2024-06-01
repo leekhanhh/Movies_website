@@ -9,7 +9,6 @@ import com.ecommerce.website.movie.mapper.UserMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.repository.AccountRepository;
 import com.ecommerce.website.movie.repository.UserRepository;
-import com.ecommerce.website.movie.service.AuthenticationService;
 import com.ecommerce.website.movie.service.JWTService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +27,10 @@ import java.util.Date;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
 public class AuthenticationController {
-    private final JWTService jwtService;
+    @Autowired
+    JWTService jwtService;
     @Autowired
     AuthenticationManager authenticationManager;
-    private final AuthenticationService authenticationService;
     @Autowired
     AccountRepository accountRepository;
     @Autowired
@@ -40,11 +39,6 @@ public class AuthenticationController {
     UserMapper userMapper;
     @Autowired
     UserRepository userRepository;
-
-    public AuthenticationController(JWTService jwtService, AuthenticationService authenticationService) {
-        this.jwtService = jwtService;
-        this.authenticationService = authenticationService;
-    }
 
     @PostMapping(value = "/auth/login", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
