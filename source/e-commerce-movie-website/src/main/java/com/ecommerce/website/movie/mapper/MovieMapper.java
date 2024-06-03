@@ -25,6 +25,7 @@ public interface MovieMapper {
     @Mapping(source = "overview", target = "overview")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "imagePath", target = "imagePath")
+    @Mapping(source = "videoGridFs", target = "videoGridFs")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "category", target = "category", qualifiedByName = "toCategoryMovieDto")
     @Mapping(source = "genres", target = "genres", qualifiedByName = "toMovieGenreDtoList")
@@ -43,6 +44,7 @@ public interface MovieMapper {
     @Mapping(source = "imagePath", target = "imagePath")
     @Mapping(source = "category", target = "category", qualifiedByName = "toCategoryDto")
     @Mapping(source = "genres", target = "genres", qualifiedByName = "toMovieGenreDtoList")
+    @Mapping(source = "videoGridFs", target = "videoGridFs")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "createdDate", target = "createdDate")
     @Mapping(source = "modifiedDate", target = "modifiedDate")
@@ -59,6 +61,7 @@ public interface MovieMapper {
     @Mapping(source = "price", target = "price")
     @Mapping(source = "imagePath", target = "imagePath")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "videoGridFs", target = "videoGridFs")
     @BeanMapping(ignoreByDefault = true)
     void updateMovie(UpdateMovieForm movieForm, @MappingTarget Movie movie);
 

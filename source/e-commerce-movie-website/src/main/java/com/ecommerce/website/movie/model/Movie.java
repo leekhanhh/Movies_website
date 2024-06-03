@@ -30,4 +30,5 @@ public class Movie extends Auditable<String> {
     private Category category;
     @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MovieGenre> genres = new ArrayList<>();
+    private String videoGridFs;
 }

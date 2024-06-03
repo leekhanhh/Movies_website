@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 public class JWTService {
     @Value("${jwt.secret-key}")
     private String secret;
-    @Value("${jwt.expiration-time}")
-    private long jwtExpiration;
     private static final long EXPIRE_DURATION = 31L * 24 * 60 * 60 * 1000;
 
     public String buildToken(

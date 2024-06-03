@@ -22,10 +22,10 @@ public class FavoriteListCriteria implements Serializable {
             public Predicate toPredicate(Root<FavoriteList> root, javax.persistence.criteria.CriteriaQuery<?> criteriaQuery, javax.persistence.criteria.CriteriaBuilder criteriaBuilder) {
                 List<Predicate> predicates = new ArrayList<>();
                 if (getAccountId() != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("accountId"), getAccountId()));
+                    predicates.add(criteriaBuilder.equal(root.get("account").get("id"), getAccountId()));
                 }
                 if (getMovieId() != null) {
-                    predicates.add(criteriaBuilder.equal(root.get("movieId"), getMovieId()));
+                    predicates.add(criteriaBuilder.equal(root.get("movie").get("id"), getMovieId()));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }

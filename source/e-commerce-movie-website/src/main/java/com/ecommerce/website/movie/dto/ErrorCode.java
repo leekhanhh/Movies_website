@@ -68,4 +68,13 @@ public class ErrorCode {
      */
     public static final String RATING_ALREADY_EXIST = "ERROR-RATING-000";
     public static final String RATING_NOT_FOUND = "ERROR-RATING-001";
+
+    /**
+     * Video error code
+     */
+    public static final String VIDEO_NOT_FOUND = "ERROR-VIDEO-000";
+    public static final String VIDEO_CREATION_FAILED = "ERROR-VIDEO-001";
+    public static final String VIDEO_DELETE_FAILED = "ERROR-VIDEO-002";
+    public static final String MOVIE_VIDEO_EXISTED = "ERROR-VIDEO-003";
+
 }

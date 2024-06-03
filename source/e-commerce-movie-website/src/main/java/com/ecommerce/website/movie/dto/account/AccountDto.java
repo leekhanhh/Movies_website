@@ -8,7 +8,7 @@ import java.util.Date;
 @Data
 public class AccountDto extends BaseInfo {
     String email;
-    String username;
+    String fullname;
     String phone;
     String avatarPath;
     Integer role;

@@ -28,4 +28,6 @@ public class UpdateMovieForm {
     private Long categoryId;
     @ApiModelProperty(value = "genre list ids", notes = "genre list ids can not be null!", example = "[1,2]")
     private Long[] genreListIds;
+    @ApiModelProperty(value = "video link", notes = "video link can not be null!", example = "1")
+    private String videoGridFs;
 }

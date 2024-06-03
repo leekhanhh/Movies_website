@@ -15,4 +15,5 @@ public class MovieDto extends BaseInfo {
     private String imagePath;
     private CategoryDto category;
     private List<MovieGenreDto> genres;
+    private String videoGridFs;
 }

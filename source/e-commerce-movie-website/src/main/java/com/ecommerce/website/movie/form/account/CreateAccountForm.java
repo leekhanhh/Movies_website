@@ -8,7 +8,7 @@ import javax.validation.constraints.*;
 public class CreateAccountForm {
     @NotNull
     @ApiModelProperty(value = "Username", required = true, example = "Khanh")
-    private String username;
+    private String fullname;
     @NotNull
     @ApiModelProperty(value = "Password", required = true, example = "123456")
     @Size(min = 10, message = "Password must be at least 8 characters long")

@@ -13,7 +13,7 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
         uses = {AccountMapper.class})
 public interface UserMapper {
-    @Mapping(source = "username", target = "account.username")
+    @Mapping(source = "fullname", target = "account.fullname")
     @Mapping(source = "email", target = "account.email")
     @Mapping(source = "phone", target = "account.phone")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
@@ -22,7 +22,7 @@ public interface UserMapper {
     User  formCreateUserFormToEntity(CreateUserForm createUserForm);
 
     @Mapping(target = "id", source = "id")
-    @Mapping(target = "account.username", source = "account.username")
+    @Mapping(target = "account.fullname", source = "account.fullname")
     @Mapping(target = "account.email", source = "account.email")
     @Mapping(target = "account.phone", source = "account.phone")
     @Mapping(target = "account.avatarPath", source = "account.avatarPath")
@@ -33,7 +33,7 @@ public interface UserMapper {
     UserDto fromEntityToDtoForClient(User user);
 
     @Mapping(target = "id", source = "user.id")
-    @Mapping(target = "account.username", source = "account.username")
+    @Mapping(target = "account.fullname", source = "account.fullname")
     @Mapping(target = "account.email", source = "account.email")
     @Mapping(target = "account.phone", source = "account.phone")
     @Mapping(target = "account.avatarPath", source = "account.avatarPath")

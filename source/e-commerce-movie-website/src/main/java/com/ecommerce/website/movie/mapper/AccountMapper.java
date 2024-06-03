@@ -12,14 +12,14 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AccountMapper {
-    @Mapping(target = "username", source = "username")
+    @Mapping(target = "fullname", source = "fullname")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "avatarPath", source = "avatarPath")
     @BeanMapping(ignoreByDefault = true)
     Account fromCreateAccountToDto(CreateAccountForm createAccountForm);
 
-    @Mapping(target = "username", source = "username")
+    @Mapping(target = "fullname", source = "fullname")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "avatarPath", source = "avatarPath")
@@ -28,7 +28,7 @@ public interface AccountMapper {
 
     @Mapping(target = "id", source = "id")
     @Mapping(target = "email", source = "email")
-    @Mapping(target = "username", source = "username")
+    @Mapping(target = "fullname", source = "fullname")
     @Mapping(target = "role", source = "role")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "avatarPath", source = "avatarPath")
@@ -42,7 +42,7 @@ public interface AccountMapper {
     @Mapping(target = "id", source = "id")
     @Mapping(target = "email", source = "email")
     @Mapping(target = "role", source = "role")
-    @Mapping(target = "username", source = "username")
+    @Mapping(target = "fullname", source = "fullname")
     @Mapping(target = "phone", source = "phone")
     @Mapping(target = "avatarPath", source = "avatarPath")
     @Named("fromEntityToDtoForClient")
@@ -59,7 +59,7 @@ public interface AccountMapper {
 
     @Mapping(target = "email", source = "email")
     @Mapping(target = "avatarPath", source = "avatarPath")
-    @Mapping(target = "username", source = "username")
+    @Mapping(target = "fullname", source = "fullname")
     @Mapping(target = "phone", source = "phone")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromUpdateAccountEntityToDto")

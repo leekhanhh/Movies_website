@@ -31,7 +31,7 @@ public class Account extends Auditable<String> implements UserDetails {
     String email;
     @JsonIgnore
     String password;
-    String username;
+    String fullname;
     String phone;
     String avatarPath;
     Date lastLogin;

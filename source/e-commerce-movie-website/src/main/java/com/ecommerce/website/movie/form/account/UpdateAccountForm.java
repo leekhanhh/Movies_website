@@ -14,7 +14,7 @@ public class UpdateAccountForm {
     private Long id;
     @NotNull
     @ApiModelProperty(value = "Username", required = true, example = "Khanh")
-    private String username;
+    private String fullname;
     @NotEmpty
     @ApiModelProperty(value = "Email", required = true, example = "abc@gmail.com")
     @Email(message = "Email should be valid")

@@ -18,7 +18,7 @@ import java.util.List;
 public class AccountCriteria implements Serializable {
     Long id;
     String email;
-    String username;
+    String fullname;
     String phone;
 
     public Specification<Account> getSpecification() {
@@ -31,8 +31,8 @@ public class AccountCriteria implements Serializable {
                 if (getId() != null) {
                     predicates.add(criteriaBuilder.equal(root.get("id"), getId()));
                 }
-                if (getUsername() != null) {
-                    predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("username")), "%" + getUsername().toLowerCase() + "%"));
+                if (getFullname() != null) {
+                    predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("fullname")), "%" + getFullname().toLowerCase() + "%"));
                 }
                 if (getEmail() != null) {
                     predicates.add(criteriaBuilder.like(root.get("email"), "%" + getEmail() + "%"));
