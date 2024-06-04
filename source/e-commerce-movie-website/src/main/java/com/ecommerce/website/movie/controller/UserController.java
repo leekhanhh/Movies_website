@@ -92,6 +92,12 @@ public class UserController extends BaseController{
             apiResponseDto.setMessage("User not found");
             return apiResponseDto;
         }
+        if(user == null){
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);
+            apiResponseDto.setMessage("User not found");
+            return apiResponseDto;
+        }
         userMapper.updateUserFormToEntity(updateUserForm, user);
         userRepository.save(user);
         apiResponseDto.setMessage("User has been updated successfully!");

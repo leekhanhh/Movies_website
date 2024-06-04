@@ -10,10 +10,12 @@ import com.ecommerce.website.movie.mapper.ReviewMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.Review;
+import com.ecommerce.website.movie.model.User;
 import com.ecommerce.website.movie.model.criteria.ReviewCriteria;
 import com.ecommerce.website.movie.repository.AccountRepository;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.repository.ReviewRepository;
+import com.ecommerce.website.movie.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,19 +41,21 @@ public class ReviewController {
     private AccountRepository accountRepository;
     @Autowired
     MovieRepository movieRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ApiResponseDto<Long> createReview(@Valid @RequestBody CreateReviewFrom createReviewForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
-        Account account = accountRepository.findById(createReviewForm.getAccountId()).get();
-        if (account == null) {
+        User user = userRepository.findById(createReviewForm.getAccountId()).orElse(null);
+        if (user == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
-            apiResponseDto.setMessage("Account not found!");
+            apiResponseDto.setMessage("User not found!");
             return apiResponseDto;
         }
-        Movie movie = movieRepository.findById(createReviewForm.getMovieId()).get();
+        Movie movie = movieRepository.findById(createReviewForm.getMovieId()).orElse(null);
         if (movie == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.MOVIE_NOT_FOUND);

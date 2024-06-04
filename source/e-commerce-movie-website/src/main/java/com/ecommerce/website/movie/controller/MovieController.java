@@ -8,6 +8,7 @@ import com.ecommerce.website.movie.dto.VideoResponseDto;
 import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.form.movie.CreateMovieForm;
 import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
+import com.ecommerce.website.movie.mapper.MovieGenreMapper;
 import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.model.*;
 import com.ecommerce.website.movie.model.criteria.MovieCriteria;
@@ -37,7 +38,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/movie")
@@ -57,7 +57,9 @@ public class MovieController {
     @Autowired
     LoadVideoRepository loadVideoRepository;
     @Autowired
-    private GridFsTemplate gridFsTemplate;
+    GridFsTemplate gridFsTemplate;
+    @Autowired
+    MovieGenreMapper movieGenreMapper;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -158,8 +160,8 @@ public class MovieController {
 
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<MovieDto> updateMovie(@Valid @RequestBody UpdateMovieForm movieForm, BindingResult bindingResult) {
-        ApiResponseDto<MovieDto> apiResponseDto = new ApiResponseDto<>();
+    public ApiResponseDto<Long> updateMovie(@Valid @RequestBody UpdateMovieForm movieForm, BindingResult bindingResult) {
+        ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
         Movie existedMovie = movieRepository.findById(movieForm.getId()).orElse(null);
         if (existedMovie == null) {
             apiResponseDto.setResult(false);
@@ -179,14 +181,13 @@ public class MovieController {
         if (!existedMovie.getPrice().equals(movieForm.getPrice())) {
             existedMovie.setPrice(movieForm.getPrice());
         }
-        movieMapper.updateMovie(movieForm, existedMovie);
-        movieRepository.save(existedMovie);
+
         Category category = categoryRepository.findById(movieForm.getCategoryId()).orElse(null);
         if(category != null && category.getKind().equals(Constant.CATEGORY_KIND_MOVIE_TYPE)){
             existedMovie.setCategory(category);
         }
-        movieGenreRepository.deleteAllByMovie(existedMovie);
 
+        movieGenreRepository.deleteAllByMovieId(movieForm.getId());
         List<MovieGenre> genresMovieList = new ArrayList<>();
         for (Long genreId : movieForm.getGenreListIds()) {
             Category genreCategory = categoryRepository.findById(genreId).orElse(null);
@@ -200,10 +201,10 @@ public class MovieController {
         if(!genresMovieList.isEmpty()){
             movieGenreRepository.saveAll(genresMovieList);
         }
-
-        Movie movie = movieRepository.findById(existedMovie.getId()).orElse(null);
+        movieMapper.updateMovie(movieForm, existedMovie);
+        movieRepository.save(existedMovie);
         apiResponseDto.setMessage("Movie has been updated successfully!");
-        apiResponseDto.setData(movieMapper.toServerMovieDto(movie));
+        apiResponseDto.setData(existedMovie.getId());
         return apiResponseDto;
     }
 

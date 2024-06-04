@@ -55,6 +55,10 @@ public interface UserMapper {
     @Named("fromEntityToDtoForServerList")
     List<UserDto> fromEntityToDtoForServerList(List<User> users);
 
+    @Mapping(target = "account.fullname", source = "fullname")
+    @Mapping(target = "account.email", source = "email")
+    @Mapping(target = "account.phone", source = "phone")
+    @Mapping(target = "account.avatarPath", source = "avatarPath")
     @Mapping(target = "dateOfBirth", source = "dateOfBirth")
     @Mapping(target = "gender", source = "gender")
     void updateUserFormToEntity(UpdateUserForm updateUserForm, @MappingTarget User user);

@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 @Data
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class ReviewDto extends BaseInfo {
+    Long id;
     MovieDto movie;
     AccountDto account;
     String content;

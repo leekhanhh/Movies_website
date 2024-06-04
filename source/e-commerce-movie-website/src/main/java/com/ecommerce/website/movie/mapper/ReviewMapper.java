@@ -16,6 +16,7 @@ public interface ReviewMapper {
     @Named("fromCreateReviewEntity")
     Review fromCreateReviewEntity(CreateReviewFrom createReviewEntity);
 
+    @Mapping(source = "id", target = "id")
     @Mapping(source = "account.id", target = "account.id")
     @Mapping(source = "content", target = "content")
     @Mapping(source = "createdDate", target = "createdDate")
@@ -23,6 +24,7 @@ public interface ReviewMapper {
     @BeanMapping(ignoreByDefault = true)
     @Named("fromReviewEntityToDto")
     ReviewDto fromReviewEntityToDto(Review review);
+
 
     @Mapping(source = "movie.id", target = "movie.id")
     @Mapping(source = "content", target = "content")

@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.form.user;
 
+import com.ecommerce.website.movie.constant.Constant;
 import com.ecommerce.website.movie.dto.account.AccountDto;
 import com.ecommerce.website.movie.validation.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -10,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.Date;
 
 @Data
@@ -31,8 +33,8 @@ public class CreateUserForm {
     @NotEmpty
     @ApiModelProperty(value = "User password", required = true)
     String password;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Constant.DATE_TIME_FORMAT, timezone = "UTC")
     @ApiModelProperty(value = "User date of birth", required = true)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     Date dateOfBirth;
     @ApiModelProperty(value = "User gender")
     @Gender(message = "Gender must be 1 (Male) or 0 (Female)", allowNull = true)

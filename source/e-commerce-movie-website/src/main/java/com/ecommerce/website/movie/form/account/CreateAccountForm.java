@@ -11,7 +11,7 @@ public class CreateAccountForm {
     private String fullname;
     @NotNull
     @ApiModelProperty(value = "Password", required = true, example = "123456")
-    @Size(min = 10, message = "Password must be at least 8 characters long")
+    @Size(min = 10, message = "Password must be at least 10 characters long")
     private String password;
     @NotEmpty
     @ApiModelProperty(value = "Email", required = true, example = "abc@gmail.com")
