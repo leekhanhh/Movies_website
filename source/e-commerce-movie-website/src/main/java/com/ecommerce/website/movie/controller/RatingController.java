@@ -10,12 +10,15 @@ import com.ecommerce.website.movie.mapper.RatingMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.Rating;
+import com.ecommerce.website.movie.model.User;
 import com.ecommerce.website.movie.model.criteria.RatingCriteria;
 import com.ecommerce.website.movie.repository.AccountRepository;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.repository.RatingRepository;
+import com.ecommerce.website.movie.repository.UserRepository;
 import com.ecommerce.website.movie.service.RatingService;
 import lombok.extern.slf4j.Slf4j;
+import org.h2.expression.condition.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +29,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/v1/rating")
@@ -40,7 +45,7 @@ public class RatingController {
     @Autowired
     MovieRepository movieRepository;
     @Autowired
-    AccountRepository accountRepository;
+    UserRepository userRepository;
     @Autowired
     RatingService ratingService;
 
@@ -48,11 +53,11 @@ public class RatingController {
     @Transactional
     public ApiResponseDto<Long> createRating(@Valid @RequestBody CreateRatingForm ratingForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
-        Account account = accountRepository.findById(ratingForm.getAccountId()).orElse(null);
-        if (account == null) {
+        User user = userRepository.findById(ratingForm.getAccountId()).orElse(null);
+        if (user == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
-            apiResponseDto.setMessage("Account not found!");
+            apiResponseDto.setMessage("User not found!");
             return apiResponseDto;
         }
         Movie movie = movieRepository.findById(ratingForm.getMovieId()).orElse(null);
@@ -69,8 +74,6 @@ public class RatingController {
             return apiResponseDto;
         }
         Rating rating = ratingMapper.fromRatingForm(ratingForm);
-        rating.setAccount(account);
-        rating.setMovie(movie);
         ratingRepository.save(rating);
         apiResponseDto.setMessage("Rating has been saved successfully!");
         return apiResponseDto;
@@ -98,8 +101,8 @@ public class RatingController {
     @Transactional
     public ApiResponseDto<Long> updateRating(@Valid @RequestBody UpdateRatingForm updateRatingForm, BindingResult bindingResult) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
-        Account account = accountRepository.findById(updateRatingForm.getAccountId()).orElse(null);
-        if (account == null) {
+        User user = userRepository.findById(updateRatingForm.getAccountId()).orElse(null);
+        if (user == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
             apiResponseDto.setMessage("Account not found!");
@@ -155,22 +158,28 @@ public class RatingController {
     public ApiResponseDto<ResponseListDto<RatingDto>> listRecommendingMovie(RatingCriteria ratingCriteria, Pageable pageable){
         ApiResponseDto<ResponseListDto<RatingDto>> apiResponseDto = new ApiResponseDto<>();
         Page<Rating> ratingPage = ratingRepository.findAll(ratingCriteria.getSpecification(), pageable);
-        List<Rating> ratingList = ratingRepository.findAll();
-        if(ratingPage.isEmpty()){
-            apiResponseDto.setMessage("No rating found!");
-            return apiResponseDto;
+
+        Set<Rating> recommendingRatingList = new HashSet<>();
+        Set<Long> positivelyRatedMovieIds = new HashSet<>();
+
+        for (Rating rating : ratingPage.getContent()) {
+            if (ratingService.isMoviePositivelyRated(rating.getMovie().getId())) {
+                positivelyRatedMovieIds.add(rating.getMovie().getId());
+            }
         }
-        for(Rating rating : ratingList){
-            if(rating.getEvaluation() < 3.5) ratingList.remove(rating);
+
+        for (Rating rating : ratingPage.getContent()) {
+            if (positivelyRatedMovieIds.contains(rating.getMovie().getId())) {
+                recommendingRatingList.add(rating);
+            }
         }
+
         if (ratingPage.isEmpty()){
             apiResponseDto.setMessage("No recommending movie found!");
             return apiResponseDto;
         }
 
-        ratingList.sort((rating1, rating2) -> rating2.getEvaluation().compareTo(rating1.getEvaluation()));
-
-        ResponseListDto<RatingDto> ratingDtoList =  new ResponseListDto(ratingMapper.toRatingDtoList(ratingList), ratingPage.getTotalElements(), ratingPage.getTotalPages());
+        ResponseListDto<RatingDto> ratingDtoList =  new ResponseListDto(ratingMapper.toRatingDtoRecommendedMovieList(recommendingRatingList), ratingPage.getTotalElements(), ratingPage.getTotalPages());
         apiResponseDto.setData(ratingDtoList);
         apiResponseDto.setMessage("Get rating list successfully!");
         return apiResponseDto;

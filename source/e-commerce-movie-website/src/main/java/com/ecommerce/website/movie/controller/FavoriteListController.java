@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/favorite-list")
@@ -71,12 +72,12 @@ public class FavoriteListController {
         return apiResponseDto;
     }
 
-    @DeleteMapping(value = "/delete/{accountId}/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ApiResponseDto<Long> deleteFavoriteList(@PathVariable Long movieId, @PathVariable Long accountId) {
+    public ApiResponseDto<Long> deleteFavoriteList(@PathVariable Long id) {
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
 
-        FavoriteList favoriteList = favoriteListRepository.findByAccountIdAndMovieId(accountId, movieId);
+        FavoriteList favoriteList = favoriteListRepository.findById(id).orElse(null);
 
         if (favoriteList == null) {
             apiResponseDto.setResult(false);
@@ -85,7 +86,7 @@ public class FavoriteListController {
             return apiResponseDto;
         }
 
-        favoriteListRepository.delete(favoriteList);
+        favoriteListRepository.deleteById(id);
 
         apiResponseDto.setResult(true);
         apiResponseDto.setMessage("Favorite item deleted successfully!");
@@ -107,6 +108,16 @@ public class FavoriteListController {
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
         Page<FavoriteList> favoriteListPage = favoriteListRepository.findAll(favoriteListCriteria.getSpecification(), pageable);
         ResponseListDto<MovieDto> responseListDto = new ResponseListDto(favoriteListMapper.toMovieDtoList(favoriteListPage.getContent()), favoriteListPage.getTotalElements(), favoriteListPage.getTotalPages());
+        apiResponseDto.setData(responseListDto);
+        return apiResponseDto;
+    }
+
+    @GetMapping(value = "/list-movie-by-accountId", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<MovieDto>> listMovieByAccountId(@RequestParam("accountId") Long accountId, FavoriteListCriteria favoriteListCriteria, Pageable pageable) {
+        ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        List<FavoriteList> favoriteList = favoriteListRepository.findByAccountId(accountId, pageable);
+        Page<FavoriteList> favoriteListPage = favoriteListRepository.findAll(favoriteListCriteria.getSpecification(), pageable);
+        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(favoriteListMapper.toMovieDtoList(favoriteList), favoriteListPage.getTotalElements(), favoriteListPage.getTotalPages());
         apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }
