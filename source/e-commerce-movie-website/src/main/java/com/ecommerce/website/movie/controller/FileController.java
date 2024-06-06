@@ -2,8 +2,12 @@ package com.ecommerce.website.movie.controller;
 
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.UploadFileDto;
+import com.ecommerce.website.movie.dto.UploadVideoDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
+import com.ecommerce.website.movie.form.DeleteFileForm;
 import com.ecommerce.website.movie.form.UploadFileForm;
+import com.ecommerce.website.movie.model.Movie;
+import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +15,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.*;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
@@ -23,10 +28,17 @@ import java.util.concurrent.TimeUnit;
 public class FileController {
     @Autowired
     MovieService movieService;
+    @Autowired
+    MovieRepository movieRepository;
 
-    @PostMapping(value = "/upload/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/upload-file/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<UploadFileDto> upload(@Valid UploadFileForm uploadFileForm, BindingResult bindingResult) {
         return movieService.uploadFileS3(uploadFileForm);
+    }
+
+    @PostMapping(value = "/upload-video/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<UploadVideoDto> uploadVideo(@RequestParam("file") MultipartFile file, @RequestParam("movieId") Long movieId) {
+        return movieService.uploadVideoS3(file, movieId);
     }
 
     @GetMapping(value = "/load/s3/{fileName:.+}")
@@ -57,9 +69,11 @@ public class FileController {
                 .body(resource);
     }
 
-    @DeleteMapping(value = "/delete/s3/{fileName}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        movieService.deleteFileS3(fileName);
-        return ResponseEntity.ok("File deleted successfully");
+    @DeleteMapping(value = "/delete/s3")
+    public ApiResponseDto<String> deleteFile(@Valid @RequestBody DeleteFileForm deleteFileForm, BindingResult bindingResult) {
+        ApiResponseDto<String> apiResponseDto = new ApiResponseDto<>();
+        movieService.deleteFileS3(deleteFileForm.getFileName());
+        apiResponseDto.setMessage("File deleted successfully by key - " + deleteFileForm.getFileName());
+        return  apiResponseDto;
     }
 }

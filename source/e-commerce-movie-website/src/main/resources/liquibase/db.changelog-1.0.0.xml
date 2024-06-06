@@ -29,6 +29,11 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+    <changeSet id="1716407233965-26" author="GIGABYTE (generated)">
+        <createIndex indexName="idx_accounts_email" tableName="db_movies_account">
+            <column name="email"/>
+        </createIndex>
+    </changeSet>
     <changeSet author="GIGABYTE (generated)" id="1716407233965-2">
         <createTable tableName="db_movies_user">
             <column name="account_id" type="BIGINT">
@@ -76,6 +81,11 @@
             </column>
             <column name="status" type="INT"/>
         </createTable>
+    </changeSet>
+    <changeSet id="1716407233965-25" author="GIGABYTE (generated)">
+        <createIndex indexName="idx_movies_name" tableName="db_movies_movie">
+            <column name="title"/>
+        </createIndex>
     </changeSet>
     <changeSet author="GIGABYTE (generated)" id="1716407233965-4">
         <createTable tableName="db_movies_category">

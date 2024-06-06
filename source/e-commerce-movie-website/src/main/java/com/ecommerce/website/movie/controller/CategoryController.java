@@ -10,6 +10,7 @@ import com.ecommerce.website.movie.form.category.UpdateCategoryForm;
 import com.ecommerce.website.movie.mapper.CategoryMapper;
 import com.ecommerce.website.movie.model.Category;
 import com.ecommerce.website.movie.model.criteria.CategoryCriteria;
+import com.ecommerce.website.movie.model.criteria.MovieCriteria;
 import com.ecommerce.website.movie.repository.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,27 +141,4 @@ public class CategoryController {
         apiMessageDto.setMessage("Get auto-complete list category success.");
         return apiMessageDto;
     }
-
-    @GetMapping(value = "/get-all-genre", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponseDto<ResponseListDto<CategoryDto>> getAllGenre(CategoryCriteria categoryCriteria, Pageable pageable) {
-        ApiResponseDto<ResponseListDto<CategoryDto>> apiResponseDto = new ApiResponseDto<>();
-
-        List<Object[]> categoryData = categoryRepository.findAllByKind(Constant.CATEGORY_KIND_MOVIE_GENRE);
-
-        List<CategoryDto> categoryDtos = new ArrayList<>();
-        for (Object[] row : categoryData) {
-            CategoryDto dto = new CategoryDto();
-            dto.setId((Long) row[0]);
-            dto.setName((String) row[1]);
-            categoryDtos.add(dto);
-        }
-
-        Page<Category> categoryPage = categoryRepository.findAll(categoryCriteria.categorySpecification(), pageable);
-        ResponseListDto<CategoryDto> responseListDto = new ResponseListDto(categoryDtos, categoryPage.getTotalElements(), categoryPage.getTotalPages());
-
-        apiResponseDto.setData(responseListDto);
-        apiResponseDto.setMessage("Get all genre successfully!");
-        return apiResponseDto;
-    }
-
 }

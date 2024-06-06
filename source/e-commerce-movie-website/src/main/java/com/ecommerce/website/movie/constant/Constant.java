@@ -24,6 +24,4 @@ public class Constant {
     public static final Integer STATUS_ACTIVE = 1;
     public static final Integer STATUS_PENDING = 0;
 
-    //Region
-    public static final String REGION_STATIC = "ap-southeast-1";
 }

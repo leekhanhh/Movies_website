@@ -2,6 +2,7 @@ package com.ecommerce.website.movie.model.criteria;
 
 import com.ecommerce.website.movie.model.Category;
 import com.ecommerce.website.movie.model.Movie;
+import com.ecommerce.website.movie.model.MovieGenre;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -43,6 +44,14 @@ public class MovieCriteria implements Serializable {
                 if(getCategoryId()!=null){
                     Join<Movie, Category> joinCategory = root.join("category", JoinType.INNER);
                     predicates.add(criteriaBuilder.equal(joinCategory.get("id"),getCategoryId()));
+                }
+                if (getMovieGenreId() != null) {
+                    Join<Movie, MovieGenre> joinMovieGenre = root.join("genres", JoinType.INNER);
+                    Join<MovieGenre, Category> joinCategory = joinMovieGenre.join("category", JoinType.INNER);
+                    predicates.add(criteriaBuilder.equal(joinCategory.get("id"), getMovieGenreId()));
+                    /*Root<MovieGenre> movieGenreRoot = criteriaQuery.from(MovieGenre.class);
+                    predicates.add(criteriaBuilder.equal(movieGenreRoot.get("category").get("id"), getMovieGenreId()));
+                    predicates.add(criteriaBuilder.equal(movieGenreRoot.get("movie").get("id"), root.get("id")));*/
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }

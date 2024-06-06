@@ -23,7 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -100,7 +102,7 @@ public class MovieController {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie != null) {
             movieRepository.delete(movie);
-            loadVideoRepository.deleteVideo(movie.getVideoGridFs());
+            movieService.deleteVideoS3ByLink(movie.getVideoGridFs());
             apiResponseDto.setMessage("Movie deleted successfully!");
             apiResponseDto.setData(movieMapper.toServerMovieDto(movie));
         } else {
@@ -141,6 +143,7 @@ public class MovieController {
     @GetMapping(value = "/list-server", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<ResponseListDto<MovieDto>> listMovie(MovieCriteria movieCriteria, Pageable pageable) {
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Movie> moviePage = movieRepository.findAll(movieCriteria.getSpecification(), pageable);
         ResponseListDto<MovieDto> responseListDto = new ResponseListDto(movieMapper.toServerMovieDtoList(moviePage.getContent()), moviePage.getTotalElements(), moviePage.getTotalPages());
         apiResponseDto.setData(responseListDto);
@@ -151,6 +154,7 @@ public class MovieController {
     @GetMapping(value = "/list-client", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<ResponseListDto<MovieDto>> listClientMovie(MovieCriteria movieCriteria, Pageable pageable) {
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Movie> moviePage = movieRepository.findAll(movieCriteria.getSpecification(), pageable);
         ResponseListDto<MovieDto> responseListDto = new ResponseListDto(movieMapper.toClientMovieDtoList(moviePage.getContent()), moviePage.getTotalElements(), moviePage.getTotalPages());
         apiResponseDto.setData(responseListDto);
@@ -227,8 +231,9 @@ public class MovieController {
         return apiResponseDto;
     }
 
+
     @GetMapping("/videos/{id}")
-    public String getVideo(@PathVariable Long id, Model model) throws Exception {
+    public String getVideo(@PathVariable Long id, Model model) {
         Movie movie = movieRepository.findById(id).orElse(null);
         if (movie != null && movie.getVideoGridFs() != null) {
             model.addAttribute("title", movie.getTitle());
@@ -238,6 +243,7 @@ public class MovieController {
             return "error";
         }
     }
+
     @PostMapping("/videos/add/{movieId}")
     public ApiResponseDto<String> addMovieVideo(@PathVariable Long movieId, MultipartFile file) throws IOException {
         ApiResponseDto<String> apiResponseDto = new ApiResponseDto<>();
@@ -260,7 +266,6 @@ public class MovieController {
 
         movie.setVideoGridFs(videoId.toString());
         movieRepository.save(movie);
-
 
         return apiResponseDto;
     }

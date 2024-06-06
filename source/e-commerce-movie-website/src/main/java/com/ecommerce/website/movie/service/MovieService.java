@@ -2,20 +2,19 @@ package com.ecommerce.website.movie.service;
 
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.UploadFileDto;
+import com.ecommerce.website.movie.dto.UploadVideoDto;
 import com.ecommerce.website.movie.dto.VideoResponseDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
-import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.form.UploadFileForm;
+import com.ecommerce.website.movie.form.UploadVideoForm;
+import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.service.aws.S3Service;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.RandomStringUtils;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -25,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -32,12 +32,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Slf4j
 public class MovieService {
-    static final String[] UPLOAD_TYPES = new String[]{"LOGO", "AVATAR", "IMAGE", "DOCUMENT"};
+    private static final String[] UPLOAD_TYPES = new String[]{"LOGO", "AVATAR", "IMAGE", "DOCUMENT", "VIDEO"};
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     @Value("${cloud.aws.s3.endpoint.url}")
@@ -46,8 +45,6 @@ public class MovieService {
     private S3Service s3Service;
     @Autowired
     private GridFsTemplate gridFsTemplate;
-    @Autowired
-    private GridFSBucket gridFSBucket;
     @Autowired
     GridFsOperations gridFsOperations;
     @Autowired
@@ -65,7 +62,7 @@ public class MovieService {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(uploadFileForm.getFile().getOriginalFilename()));
         String ext = FilenameUtils.getExtension(fileName);
         String finalFile = uploadFileForm.getType() + "_" + RandomStringUtils.randomAlphanumeric(10) + "." + ext;
-        String fileUrl = endpointUrl + bucketName + "/" + finalFile;
+        String fileUrl = endpointUrl + finalFile;
         UploadFileDto uploadFileDto = new UploadFileDto();
         uploadFileDto.setFilePath(fileUrl);
         apiMessageDto.setData(uploadFileDto);
@@ -73,18 +70,62 @@ public class MovieService {
         return apiMessageDto;
     }
 
+    public ApiResponseDto<UploadVideoDto> uploadVideoS3(MultipartFile file, Long movieId) {
+        ApiResponseDto<UploadVideoDto> apiResponseDto = new ApiResponseDto<>();
+        Movie movie = movieRepository.findById(movieId).orElse(null);
+        if (movie == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setMessage("Movie not found");
+            return apiResponseDto;
+        }
+        if(movie.getVideoGridFs() != null) {
+            deleteVideoS3ByLink(movie.getVideoGridFs());
+        }
+        String fileUrl = s3Service.uploadVideo(file);
+        Long fileSize = file.getSize();
+
+        UploadVideoDto uploadVideoDto = new UploadVideoDto();
+        uploadVideoDto.setSize(fileSize);
+        uploadVideoDto.setVideoPath(fileUrl);
+
+        apiResponseDto.setData(uploadVideoDto);
+        apiResponseDto.setMessage("Upload successful");
+        movie.setVideoGridFs(fileUrl);
+        movieRepository.save(movie);
+        return apiResponseDto;
+    }
     public FileS3Dto loadFileAsResource(String fileName) {
         return s3Service.downloadFile(fileName);
     }
 
-    public void deleteFileS3(String avatarPath) {
-        String awsEndpoint = endpointUrl + bucketName + "/";
+    public void deleteVideoS3ByLink(String videoPath) {
+        String awsEndpoint = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
+        if (!videoPath.contains(awsEndpoint)) {
+            log.error("[AWS S3] Video not found!");
+            return;
+        }
+        String key = videoPath.replace(awsEndpoint, "");
+        s3Service.deleteVideo(key);
+    }
+
+    public void deleteFileS3ByLink(String avatarPath) {
+        String awsEndpoint = endpointUrl;
         if (!avatarPath.contains(awsEndpoint)) {
             log.error("[AWS S3] File not found!");
             return;
         }
         String key = avatarPath.replace(awsEndpoint, "");
         s3Service.deleteFile(key);
+    }
+    public void deleteFileS3(String avatarPath) {
+        s3Service.deleteFile(avatarPath);
+    }
+
+    public ApiResponseDto<String> deleteVideoS3(String fileName) {
+        ApiResponseDto<String> apiResponseDto = new ApiResponseDto<>();
+        String message = s3Service.deleteVideo(fileName);
+        apiResponseDto.setMessage(message);
+        return apiResponseDto;
     }
 
     public InputStream getVideoStreamById(String videoId) throws IOException {
@@ -95,10 +136,6 @@ public class MovieService {
         throw new FileNotFoundException("Video not found");
     }
 
-    public void deleteVideo(String id) {
-        gridFsTemplate.delete(new Query(Criteria.where("_id").is(id)));
-    }
-
     public VideoResponseDto getVideo(String id) throws IllegalStateException, IOException {
         GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
         VideoResponseDto video = new VideoResponseDto();
@@ -107,4 +144,9 @@ public class MovieService {
         video.setStream(gridFsOperations.getResource(file).getInputStream());
         return video;
     }
+
+    public String uploadVideo(MultipartFile file) {
+        return s3Service.uploadVideo(file);
+    }
+
 }

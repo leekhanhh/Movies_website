@@ -15,6 +15,7 @@ import com.ecommerce.website.movie.repository.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -29,6 +30,7 @@ import javax.validation.Valid;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/account")
@@ -76,6 +78,27 @@ public class AccountController extends BaseController{
         accountMapper.fromUpdateAccountEntityToDto(updateAccountForm, account);
         accountRepository.save(account);
         apiResponseDto.setMessage("Account has been updated successfully!");
+        return apiResponseDto;
+    }
+
+    @GetMapping(value = "/search-by-email", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<AccountDto>> searchByEmail(@RequestParam("email") String email, AccountCriteria accountCriteria, Pageable pageable) {
+        ApiResponseDto<ResponseListDto<AccountDto>> apiResponseDto = new ApiResponseDto<>();
+
+        accountCriteria.setEmail(email);
+        Page<Account> accountsPage = accountRepository.findAll(accountCriteria.getSpecification(), pageable);
+
+        if (!accountsPage.isEmpty()) {
+            List<AccountDto> accountDtos = accountsPage.getContent().stream()
+                    .map(accountMapper::fromAccountEntityToDtoForServer)
+                    .collect(Collectors.toList());
+            ResponseListDto responseListDto = new ResponseListDto(accountDtos, accountsPage.getTotalElements(), accountsPage.getTotalPages());
+            apiResponseDto.setMessage("Accounts found!");
+            apiResponseDto.setData(responseListDto);
+        } else {
+            apiResponseDto.setMessage("Accounts not found!");
+            apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
+        }
         return apiResponseDto;
     }
 

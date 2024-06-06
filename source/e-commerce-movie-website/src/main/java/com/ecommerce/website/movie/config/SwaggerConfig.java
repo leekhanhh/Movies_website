@@ -15,7 +15,6 @@ import java.util.HashSet;
 
 @Configuration
 @EnableSwagger2
-@Profile({"local", "dev", "staging"})
 @Import({springfox.bean.validators.configuration.BeanValidatorPluginsConfiguration.class})
 public class SwaggerConfig{
     HashSet<String> consumesAndProduces = new HashSet<>(Arrays.asList("application/json"));

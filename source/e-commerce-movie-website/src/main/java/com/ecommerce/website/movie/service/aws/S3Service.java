@@ -1,9 +1,7 @@
 package com.ecommerce.website.movie.service.aws;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
 import lombok.extern.slf4j.Slf4j;
@@ -15,19 +13,23 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Objects;
 
 @Service
 @Slf4j
 public class S3Service {
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
+    @Value("${cloud.aws.region.static}")
+    private String region;
 
     @Autowired
     private AmazonS3 s3Client;
 
+
     public String uploadFile(MultipartFile file, String fileName) {
         File fileObj = convertMultiPartFileToFile(file);
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj).withCannedAcl(CannedAccessControlList.PublicReadWrite));
         boolean delete = fileObj.delete();
         if (!delete) {
             log.error("[AWS S3] Uploaded file failed");
@@ -55,17 +57,49 @@ public class S3Service {
 
     public void deleteFile(String fileName) {
         log.info("[AWS S3] Deleting file: " + fileName + " from bucket: " + bucketName + "...");
-        s3Client.deleteObject(bucketName, fileName);
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName).withKey(fileName);
+        s3Client.deleteObject(deleteObjectRequest);
+    }
+
+    public String deleteVideo(String fileName) {
+        try {
+            String key = extractKeyFromUrl(fileName);
+            s3Client.deleteObject(new DeleteObjectRequest(bucketName, key));
+            return "Video deleted successfully.";
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete video from S3", e);
+        }
+    }
+
+    private String extractKeyFromUrl(String url) {
+        String prefix = "https://" + bucketName + ".s3.";
+        int prefixEndIndex = url.indexOf("/", prefix.length());
+        return url.substring(prefixEndIndex + 1);
     }
 
 
     private File convertMultiPartFileToFile(MultipartFile file) {
-        File convertedFile = new File(file.getOriginalFilename());
+        File convertedFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convertedFile)) {
             fos.write(file.getBytes());
         } catch (IOException e) {
             log.error("Error converting multipartFile to file", e);
         }
         return convertedFile;
+    }
+
+    public String uploadVideo(MultipartFile file) {
+        try {
+            String fileName = file.getOriginalFilename();
+            String key = "Video/" + fileName;
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+            s3Client.putObject(new PutObjectRequest(bucketName, key, file.getInputStream(), metadata).withCannedAcl(CannedAccessControlList.PublicReadWrite));
+            log.info("[AWS S3] Video uploaded : " + metadata.getContentLength() + " bytes");
+            return "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + key;
+        } catch (IOException e) {
+            log.error("[AWS S3] Uploaded video failed", e);
+            return null;
+        }
     }
 }
