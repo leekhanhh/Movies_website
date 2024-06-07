@@ -70,28 +70,16 @@ public class MovieService {
         return apiMessageDto;
     }
 
-    public ApiResponseDto<UploadVideoDto> uploadVideoS3(MultipartFile file, Long movieId) {
+    public ApiResponseDto<UploadVideoDto> uploadVideoS3(MultipartFile file) {
         ApiResponseDto<UploadVideoDto> apiResponseDto = new ApiResponseDto<>();
-        Movie movie = movieRepository.findById(movieId).orElse(null);
-        if (movie == null) {
-            apiResponseDto.setResult(false);
-            apiResponseDto.setMessage("Movie not found");
-            return apiResponseDto;
-        }
-        if(movie.getVideoGridFs() != null) {
-            deleteVideoS3ByLink(movie.getVideoGridFs());
-        }
         String fileUrl = s3Service.uploadVideo(file);
         Long fileSize = file.getSize();
 
         UploadVideoDto uploadVideoDto = new UploadVideoDto();
         uploadVideoDto.setSize(fileSize);
         uploadVideoDto.setVideoPath(fileUrl);
-
         apiResponseDto.setData(uploadVideoDto);
         apiResponseDto.setMessage("Upload successful");
-        movie.setVideoGridFs(fileUrl);
-        movieRepository.save(movie);
         return apiResponseDto;
     }
     public FileS3Dto loadFileAsResource(String fileName) {

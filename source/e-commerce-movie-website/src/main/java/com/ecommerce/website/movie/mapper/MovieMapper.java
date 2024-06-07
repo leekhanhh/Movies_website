@@ -17,6 +17,7 @@ public interface MovieMapper {
     @Mapping(source = "overview", target = "overview")
     @Mapping(source = "price", target = "price")
     @Mapping(source = "imagePath", target = "imagePath")
+    @Mapping(source = "videoPath", target = "videoGridFs")
     @BeanMapping(ignoreByDefault = true)
     Movie formCreateMovie(CreateMovieForm movieForm);
 

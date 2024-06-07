@@ -27,4 +27,8 @@ public class CreateMovieForm {
     @NotNull
     @ApiModelProperty(value = "genre ids", notes = "genre ids can not be null!", example = "[1,2]")
     private Long[] genreIds;
+    @NotNull
+    @ApiModelProperty(value = "link to video", notes = "link to video can not be null!", example = "https://www.google.com")
+    private String videoPath;
+
 }
