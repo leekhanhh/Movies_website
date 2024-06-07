@@ -21,18 +21,19 @@ public interface FavoriteListMapper {
     @Mapping(source = "movieId", target = "movie.id")
     FavoriteList fromCreateFavoriteItem(CreateFavoriteListForm favoriteListForm);
 
-    @Mapping(source = "movie.id", target = "id")
-    @Mapping(source = "movie.title", target = "title")
-    @Mapping(source = "movie.overview", target = "overview")
-    @Mapping(source = "movie.imagePath", target = "imagePath")
-    @Mapping(source = "movie.category", target = "category")
-    @Mapping(source = "movie.genres", target = "genres")
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "movie.id", target = "movie.id")
+    @Mapping(source = "movie.title", target = "movie.title")
+    @Mapping(source = "movie.overview", target = "movie.overview")
+    @Mapping(source = "movie.imagePath", target = "movie.imagePath")
+    @Mapping(source = "movie.category", target = "movie.category")
+    @Mapping(source = "movie.genres", target = "movie.genres")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromFavoriteItemToMovieDto")
-    MovieDto fromFavoriteItemToMovieDto(FavoriteList favoriteList);
+    FavoriteListDto fromFavoriteItemToMovieDto(FavoriteList favoriteList);
 
-    @IterableMapping(elementTargetType = MovieDto.class, qualifiedByName = "fromFavoriteItemToMovieDto")
-    List<MovieDto> toMovieDtoList(List<FavoriteList> favoriteListList);
+    @IterableMapping(elementTargetType = FavoriteListDto.class, qualifiedByName = "fromFavoriteItemToMovieDto")
+    List<FavoriteListDto> toMovieDtoList(List<FavoriteList> favoriteListList);
 
 
     @IterableMapping(elementTargetType = FavoriteListDto.class, qualifiedByName = "fromFavoriteItemToDto")
