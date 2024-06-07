@@ -11,7 +11,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {MovieGenreMapper.class, CategoryMapper.class})
+        uses = {MovieGenreMapper.class, CategoryMapper.class, EpisodeMapper.class})
 public interface MovieMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "overview", target = "overview")
@@ -29,6 +29,7 @@ public interface MovieMapper {
     @Mapping(source = "status", target = "status")
     @Mapping(source = "category", target = "category", qualifiedByName = "toCategoryMovieDto")
     @Mapping(source = "genres", target = "genres", qualifiedByName = "toMovieGenreDtoList")
+    @Mapping(source = "subMovies", target = "episodes", qualifiedByName = "toEpisodeList")
     @BeanMapping(ignoreByDefault = true)
     @Named("toClientMovieDto")
     MovieDto toClientMovieDto(Movie movie);
@@ -44,6 +45,7 @@ public interface MovieMapper {
     @Mapping(source = "imagePath", target = "imagePath")
     @Mapping(source = "category", target = "category", qualifiedByName = "toCategoryDto")
     @Mapping(source = "genres", target = "genres", qualifiedByName = "toMovieGenreDtoList")
+    @Mapping(source = "subMovies", target = "episodes", qualifiedByName = "toEpisodeList")
     @Mapping(source = "videoGridFs", target = "videoGridFs")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "createdDate", target = "createdDate")

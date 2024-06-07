@@ -19,6 +19,8 @@ public class ErrorCode {
      * Movie error code
      */
     public static final String MOVIE_NOT_FOUND = "ERROR-MOVIE-000";
+    public static final String MOVIE_NOT_SERIES = "ERROR-MOVIE-001";
+
 
     /**
      * Participant error code
@@ -76,5 +78,11 @@ public class ErrorCode {
     public static final String VIDEO_CREATION_FAILED = "ERROR-VIDEO-001";
     public static final String VIDEO_DELETE_FAILED = "ERROR-VIDEO-002";
     public static final String MOVIE_VIDEO_EXISTED = "ERROR-VIDEO-003";
+
+    /**
+     * Episode error code
+     */
+    public static final String EPISODE_NOT_FOUND = "ERROR-EPISODE-000";
+    public static final String DUPLICATED_EPISODE_NUMBER_ERROR = "ERROR-EPISODE-001";
 
 }

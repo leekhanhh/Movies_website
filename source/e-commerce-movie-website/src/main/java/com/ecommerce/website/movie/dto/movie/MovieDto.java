@@ -16,4 +16,5 @@ public class MovieDto extends BaseInfo {
     private CategoryDto category;
     private List<MovieGenreDto> genres;
     private String videoGridFs;
+    private List<EpisodeDto> episodes;
 }

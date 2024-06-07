@@ -3,6 +3,7 @@ package com.ecommerce.website.movie.model.criteria;
 import com.ecommerce.website.movie.model.Category;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.MovieGenre;
+import com.ecommerce.website.movie.model.SubMovie;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
