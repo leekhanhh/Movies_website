@@ -367,4 +367,10 @@
     <changeSet author="GIGABYTE (generated)" id="1717723773866-28">
         <addForeignKeyConstraint baseColumnNames="movie_id" baseTableName="db_movies_sub_movie" constraintName="FKt2mf5c042muic1rjsjvt2pkhy" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_movies_movie" validate="true" onDelete="CASCADE"/>
     </changeSet>
+    <changeSet id="1716407233965-29" author="GIGABYTE (generated)">
+        <modifyDataType tableName="db_movies_movie" columnName="overview" newDataType="VARCHAR(1000)"/>
+    </changeSet>
+    <changeSet id="1716407233965-30" author="GIGABYTE (generated)">
+        <modifyDataType tableName="db_movies_category" columnName="description" newDataType="VARCHAR(1000)"/>
+    </changeSet>
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.mapper;
 
+import com.ecommerce.website.movie.dto.account.AccountDto;
 import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.dto.votemovie.VoteMovieDto;
 import com.ecommerce.website.movie.form.votemovie.CreateVoteMovieForm;
@@ -22,6 +23,7 @@ public interface VoteMovieMapper {
     @BeanMapping(ignoreByDefault = true)
     @Named("toVoteMovieDto")
     VoteMovieDto toVoteMovieDto(VoteMovie voteMovie);
+
 
     @Mapping(source = "movie.id", target = "id")
     @Mapping(source = "movie.title", target = "title")

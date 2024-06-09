@@ -1,9 +1,6 @@
 package com.ecommerce.website.movie.model.criteria;
 
-import com.ecommerce.website.movie.model.Category;
-import com.ecommerce.website.movie.model.Movie;
-import com.ecommerce.website.movie.model.MovieGenre;
-import com.ecommerce.website.movie.model.SubMovie;
+import com.ecommerce.website.movie.model.*;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -21,6 +18,9 @@ public class MovieCriteria implements Serializable {
     private Double toPrice;
     private Long categoryId;
     private Long movieGenreId;
+    private String videoPath;
+    private Long participantId;
+    private String participantName;
     public Specification<Movie> getSpecification() {
         return new Specification<Movie>() {
             private static final long serialVersionUID = 1L;
@@ -53,6 +53,17 @@ public class MovieCriteria implements Serializable {
                     /*Root<MovieGenre> movieGenreRoot = criteriaQuery.from(MovieGenre.class);
                     predicates.add(criteriaBuilder.equal(movieGenreRoot.get("category").get("id"), getMovieGenreId()));
                     predicates.add(criteriaBuilder.equal(movieGenreRoot.get("movie").get("id"), root.get("id")));*/
+                }
+                if (getVideoPath() != null) {
+                    predicates.add(criteriaBuilder.like(root.get("videoPath"), "%" + getVideoPath() + "%"));
+                }
+                if (getParticipantId() != null) {
+                    Join<Movie, Participant> joinParticipant = root.join("participants", JoinType.INNER);
+                    predicates.add(criteriaBuilder.equal(joinParticipant.get("id"), getParticipantId()));
+                }
+                if(getParticipantName()!=null){
+                    Join<Movie, Participant> joinParticipant = root.join("participants", JoinType.INNER);
+                    predicates.add(criteriaBuilder.like(joinParticipant.get("name"), "%" + getParticipantName() + "%"));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }

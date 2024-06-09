@@ -12,5 +12,4 @@ public interface CategoryRepository extends JpaRepository<Category,Long>, JpaSpe
     Category findFirstByName(String name);
     @Query("SELECT c.id, c.name FROM Category c WHERE c.kind = :kind")
     List<Object[]> findAllByKind(@Param("kind") Integer kind);
-
 }

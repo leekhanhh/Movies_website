@@ -88,10 +88,10 @@ public class S3Service {
         return convertedFile;
     }
 
-    public String uploadVideo(MultipartFile file) {
+    public String uploadVideo(MultipartFile file, String bandwidth) {
         try {
             String fileName = file.getOriginalFilename();
-            String key = "Video/" + fileName;
+            String key = "Video/" + bandwidth + "/" + fileName;
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.setContentLength(file.getSize());
             s3Client.putObject(new PutObjectRequest(bucketName, key, file.getInputStream(), metadata).withCannedAcl(CannedAccessControlList.PublicReadWrite));
@@ -102,4 +102,7 @@ public class S3Service {
             return null;
         }
     }
+
+
+
 }

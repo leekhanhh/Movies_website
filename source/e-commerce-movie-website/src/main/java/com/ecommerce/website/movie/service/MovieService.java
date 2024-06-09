@@ -36,11 +36,13 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class MovieService {
-    private static final String[] UPLOAD_TYPES = new String[]{"LOGO", "AVATAR", "IMAGE", "DOCUMENT", "VIDEO"};
+    private static final String[] UPLOAD_TYPES = new String[]{"LOGO", "AVATAR", "IMAGE", "DOCUMENT"};
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
     @Value("${cloud.aws.s3.endpoint.url}")
     private String endpointUrl;
+    @Value("${cloud.aws.region.static}")
+    private String region;
     @Autowired
     private S3Service s3Service;
     @Autowired
@@ -62,7 +64,7 @@ public class MovieService {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(uploadFileForm.getFile().getOriginalFilename()));
         String ext = FilenameUtils.getExtension(fileName);
         String finalFile = uploadFileForm.getType() + "_" + RandomStringUtils.randomAlphanumeric(10) + "." + ext;
-        String fileUrl = endpointUrl + finalFile;
+        String fileUrl = "https://" + bucketName + ".s3." + region + ".amazonaws.com/" + finalFile;
         UploadFileDto uploadFileDto = new UploadFileDto();
         uploadFileDto.setFilePath(fileUrl);
         apiMessageDto.setData(uploadFileDto);
@@ -70,9 +72,9 @@ public class MovieService {
         return apiMessageDto;
     }
 
-    public ApiResponseDto<UploadVideoDto> uploadVideoS3(MultipartFile file) {
+    public ApiResponseDto<UploadVideoDto> uploadVideoS3(MultipartFile file, String bandwidth) {
         ApiResponseDto<UploadVideoDto> apiResponseDto = new ApiResponseDto<>();
-        String fileUrl = s3Service.uploadVideo(file);
+        String fileUrl = s3Service.uploadVideo(file, bandwidth);
         Long fileSize = file.getSize();
 
         UploadVideoDto uploadVideoDto = new UploadVideoDto();
@@ -131,10 +133,6 @@ public class MovieService {
         video.setTitle(file.getMetadata().get("title").toString());
         video.setStream(gridFsOperations.getResource(file).getInputStream());
         return video;
-    }
-
-    public String uploadVideo(MultipartFile file) {
-        return s3Service.uploadVideo(file);
     }
 
 }

@@ -1,13 +1,11 @@
 package com.ecommerce.website.movie.model.criteria;
 
+import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.SubMovie;
 import lombok.Data;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +40,8 @@ public class EpisodeCriteria implements Serializable {
                     predicateList.add(criteriaBuilder.equal(root.get("episodeNumber"), getEpisodeNumber()));
                 }
                 if(getMovieId() != null){
-                    Root<SubMovie> movieRoot = criteriaQuery.from(SubMovie.class);
-                    predicateList.add(criteriaBuilder.equal(movieRoot.get("movie").get("id"), getMovieId()));
+                    Join<SubMovie, Movie> joinMovie = root.join("movie", JoinType.INNER);
+                    predicateList.add(criteriaBuilder.equal(joinMovie.get("id"), getMovieId()));
                 }
                 return criteriaBuilder.and(predicateList.toArray(new Predicate[predicateList.size()]));
             }

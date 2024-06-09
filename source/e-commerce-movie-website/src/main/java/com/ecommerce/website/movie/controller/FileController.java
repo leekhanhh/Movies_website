@@ -37,8 +37,8 @@ public class FileController {
     }
 
     @PostMapping(value = "/upload-video/s3", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponseDto<UploadVideoDto> uploadVideo(@RequestParam("file") MultipartFile file) {
-        return movieService.uploadVideoS3(file);
+    public ApiResponseDto<UploadVideoDto> uploadVideo(@RequestParam("file") MultipartFile file, @RequestParam("bandwidth") String bandwidth) {
+        return movieService.uploadVideoS3(file, bandwidth);
     }
 
     @GetMapping(value = "/load/s3/{fileName:.+}")

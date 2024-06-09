@@ -3,6 +3,8 @@ package com.ecommerce.website.movie.dto.movie;
 import com.ecommerce.website.movie.dto.BaseInfo;
 import com.ecommerce.website.movie.dto.category.CategoryDto;
 import com.ecommerce.website.movie.dto.moviegenre.MovieGenreDto;
+import com.ecommerce.website.movie.dto.votemovie.VoteMovieDto;
+import com.ecommerce.website.movie.model.VoteMovie;
 import lombok.Data;
 
 import java.util.List;
@@ -17,4 +19,5 @@ public class MovieDto extends BaseInfo {
     private List<MovieGenreDto> genres;
     private String videoGridFs;
     private List<EpisodeDto> episodes;
+    private Integer voteCount;
 }

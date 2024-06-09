@@ -5,13 +5,14 @@ import com.ecommerce.website.movie.form.movie.CreateMovieForm;
 import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.MovieGenre;
+import com.ecommerce.website.movie.model.VoteMovie;
 import org.mapstruct.*;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE,
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {MovieGenreMapper.class, CategoryMapper.class, EpisodeMapper.class})
+        uses = {MovieGenreMapper.class, CategoryMapper.class, EpisodeMapper.class, VoteMovieMapper.class})
 public interface MovieMapper {
     @Mapping(source = "title", target = "title")
     @Mapping(source = "overview", target = "overview")
@@ -31,6 +32,7 @@ public interface MovieMapper {
     @Mapping(source = "category", target = "category", qualifiedByName = "toCategoryMovieDto")
     @Mapping(source = "genres", target = "genres", qualifiedByName = "toMovieGenreDtoList")
     @Mapping(source = "subMovies", target = "episodes", qualifiedByName = "toEpisodeList")
+    @Mapping(source = "createdDate", target = "createdDate")
     @BeanMapping(ignoreByDefault = true)
     @Named("toClientMovieDto")
     MovieDto toClientMovieDto(Movie movie);
@@ -74,4 +76,12 @@ public interface MovieMapper {
     @BeanMapping(ignoreByDefault = true)
     MovieDto autoCompleteDtoMovie(Movie movie);
 
+    private Integer calculateVoteCount(List<VoteMovie> voteMovies) {
+        return (voteMovies == null) ? 0 : voteMovies.size();
+    }
+
+    @AfterMapping
+    default void setVoteCount(@MappingTarget MovieDto movieDto, Movie movie) {
+        movieDto.setVoteCount(calculateVoteCount(movie.getVoteMovies()));
+    }
 }
