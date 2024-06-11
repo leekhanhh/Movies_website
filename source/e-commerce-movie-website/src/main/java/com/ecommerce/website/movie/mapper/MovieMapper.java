@@ -5,6 +5,7 @@ import com.ecommerce.website.movie.form.movie.CreateMovieForm;
 import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.MovieGenre;
+import com.ecommerce.website.movie.model.Rating;
 import com.ecommerce.website.movie.model.VoteMovie;
 import org.mapstruct.*;
 
@@ -83,5 +84,17 @@ public interface MovieMapper {
     @AfterMapping
     default void setVoteCount(@MappingTarget MovieDto movieDto, Movie movie) {
         movieDto.setVoteCount(calculateVoteCount(movie.getVoteMovies()));
+    }
+
+    private Double calculateRatingAverage(List<Rating> ratings) {
+        if (ratings == null) {
+            return 0.0;
+        }
+        return ratings.stream().mapToDouble(Rating::getEvaluation).average().orElse(0.0);
+    }
+
+    @AfterMapping
+    default void setRatingAverage(@MappingTarget MovieDto movieDto, Movie movie) {
+        movieDto.setRatingAverage(calculateRatingAverage(movie.getRatings()));
     }
 }

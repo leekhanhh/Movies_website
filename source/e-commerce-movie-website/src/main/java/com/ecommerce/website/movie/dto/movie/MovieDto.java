@@ -20,4 +20,5 @@ public class MovieDto extends BaseInfo {
     private String videoGridFs;
     private List<EpisodeDto> episodes;
     private Integer voteCount;
+    private Double ratingAverage;
 }

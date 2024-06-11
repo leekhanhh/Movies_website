@@ -104,7 +104,6 @@ public class MovieController {
             movieRepository.delete(movie);
             movieService.deleteVideoS3ByLink(movie.getVideoGridFs());
             apiResponseDto.setMessage("Movie deleted successfully!");
-            apiResponseDto.setData(movieMapper.toServerMovieDto(movie));
         } else {
             apiResponseDto.setMessage("Movie not found!");
             apiResponseDto.setCode(ErrorCode.MOVIE_NOT_FOUND);
@@ -139,6 +138,7 @@ public class MovieController {
         }
         return apiResponseDto;
     }
+
 
     @GetMapping(value = "/list-server", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<ResponseListDto<MovieDto>> listMovie(MovieCriteria movieCriteria, Pageable pageable) {

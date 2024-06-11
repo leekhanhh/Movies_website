@@ -8,6 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = TablePrefix.PREFIX_TABLE + "review")
@@ -25,4 +27,10 @@ public class Review extends Auditable<String> {
     @JoinColumn(name = "movie_id")
     Movie movie;
     String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    Review parent;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<Review> replies = new ArrayList<>();
+    @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    List<LikedReview> likedReviews = new ArrayList<>();
 }

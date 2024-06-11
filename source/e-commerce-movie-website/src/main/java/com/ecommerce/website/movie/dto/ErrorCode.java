@@ -85,4 +85,12 @@ public class ErrorCode {
     public static final String EPISODE_NOT_FOUND = "ERROR-EPISODE-000";
     public static final String DUPLICATED_EPISODE_NUMBER_ERROR = "ERROR-EPISODE-001";
 
+    /**
+     * OTP error code
+     */
+    public static final String ACCOUNT_OTP_NOT_EXPIRED = "ERROR-OTP-000";
+    public static final String ACCOUNT_OTP_NOT_FOUND = "ERROR-OTP-001";
+    public static final String ACCOUNT_OTP_EXPIRED = "ERROR-OTP-002";
+    public static final String ACCOUNT_OTP_INVALID = "ERROR-OTP-003";
+
 }
