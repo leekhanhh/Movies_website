@@ -4,7 +4,6 @@ import com.ecommerce.website.movie.constant.Constant;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
-import com.ecommerce.website.movie.dto.VideoResponseDto;
 import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.form.movie.CreateMovieForm;
 import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
@@ -13,14 +12,11 @@ import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.model.*;
 import com.ecommerce.website.movie.model.criteria.MovieCriteria;
 import com.ecommerce.website.movie.repository.CategoryRepository;
-import com.ecommerce.website.movie.repository.LoadVideoRepository;
+import com.ecommerce.website.movie.repository.WatchedMovieRepository;
 import com.ecommerce.website.movie.repository.MovieGenreRepository;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.service.MovieService;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,16 +24,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,7 +48,7 @@ public class MovieController {
     @Autowired
     MovieService movieService;
     @Autowired
-    LoadVideoRepository loadVideoRepository;
+    WatchedMovieRepository loadVideoRepository;
     @Autowired
     GridFsTemplate gridFsTemplate;
     @Autowired
