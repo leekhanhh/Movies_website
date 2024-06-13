@@ -5,6 +5,7 @@ import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
 import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.dto.votemovie.VoteMovieDto;
+import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.mapper.VoteMovieMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.Movie;
@@ -21,8 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @org.springframework.web.bind.annotation.RestController
 @org.springframework.web.bind.annotation.RequestMapping("/v1/vote-movie")
@@ -37,6 +37,8 @@ public class VoteMovieController {
     MovieRepository movieRepository;
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    MovieMapper movieMapper;
 
     @PostMapping(value = "/create-vote", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -99,7 +101,26 @@ public class VoteMovieController {
     public ApiResponseDto<ResponseListDto<MovieDto>> listMovie(VoteMovieCriteria voteMovieCriteria, Pageable pageable){
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
         Page<VoteMovie> voteMoviePage = voteMovieRepository.findAll(voteMovieCriteria.getSpecification(), pageable);
-        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(voteMovieMapper.toMovieDtoList(voteMoviePage.getContent()), voteMoviePage.getTotalElements(), voteMoviePage.getTotalPages());
+        List<Movie> movieList = movieRepository.findAll();
+        Map<Long,Integer> movieIdMap = new LinkedHashMap<>();
+        for (Movie movie : movieList) {
+            Integer count = 0;
+            for (VoteMovie voteMovie : voteMoviePage.getContent()) {
+                if (movie.getId().equals(voteMovie.getMovie().getId())) {
+                    count++;
+                }
+            }
+            movieIdMap.put(movie.getId(), count);
+        }
+        List<Movie> sortedMovieList = new ArrayList<>();
+        movieIdMap.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(10)
+                .forEachOrdered(x -> {
+                    sortedMovieList.add(movieRepository.findById(x.getKey()).orElse(null));
+                });
+
+        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(movieMapper.toClientMovieDtoList(sortedMovieList), voteMoviePage.getTotalElements(), voteMoviePage.getTotalPages());
         apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }
@@ -107,7 +128,7 @@ public class VoteMovieController {
     public ApiResponseDto<ResponseListDto<VoteMovieDto>> getVoteMovie(@PathVariable Long accountId, Pageable pageable){
         ApiResponseDto<ResponseListDto<VoteMovieDto>> apiResponseDto = new ApiResponseDto<>();
         Page<VoteMovie> voteMovieList = voteMovieRepository.findAllByAccountId(accountId, pageable);
-        ResponseListDto<VoteMovieDto> responseListDto = new ResponseListDto(voteMovieMapper.toMovieDtoList(voteMovieList.getContent()), voteMovieList.getTotalElements(), voteMovieList.getTotalPages());
+        ResponseListDto<VoteMovieDto> responseListDto = new ResponseListDto(voteMovieMapper.toMovieDtoList(voteMovieList.getContent()),voteMovieList.getTotalElements(), voteMovieList.getTotalPages());
         apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }

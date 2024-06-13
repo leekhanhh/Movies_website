@@ -19,7 +19,7 @@ public interface WatchedMovieMapper {
     @Mapping(source = "movie.category", target = "movie.category")
     @Mapping(source = "movie.videoGridFs", target = "movie.videoGridFs")
     @Mapping(source = "movie.imagePath", target = "movie.imagePath")
-    @Mapping(source = "createdDate", target = "createdDate", dateFormat = "dd-MM-yyyy HH:mm:ss")
+    @Mapping(source = "movie.createdDate", target = "movie.createdDate", dateFormat = "dd-MM-yyyy HH:mm:ss")
     @Named("toWatchedMovieDto")
     @BeanMapping(ignoreByDefault = true)
     WatchedMovieDto toWatchedMovieDto(WatchedMovies watchedMovies);
