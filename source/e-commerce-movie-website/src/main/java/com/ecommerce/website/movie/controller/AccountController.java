@@ -243,7 +243,7 @@ public class AccountController extends BaseController{
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.ACCOUNT_EMAIL_NOT_FOUND);
             apiResponseDto.setMessage("Email not found");
-      n         return apiResponseDto;
+            return apiResponseDto;
         }
         account.setPassword(passwordEncoder.encode(forgotPasswordForm.getPassword()));
         accountRepository.save(account);

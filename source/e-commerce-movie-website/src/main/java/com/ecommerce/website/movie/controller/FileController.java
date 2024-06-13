@@ -1,6 +1,7 @@
 package com.ecommerce.website.movie.controller;
 
 import com.ecommerce.website.movie.dto.ApiResponseDto;
+import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.UploadFileDto;
 import com.ecommerce.website.movie.dto.UploadVideoDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
@@ -17,7 +18,11 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -69,11 +74,12 @@ public class FileController {
                 .body(resource);
     }
 
-    @DeleteMapping(value = "/delete/s3")
+    @DeleteMapping(value = "/delete/s3") 
     public ApiResponseDto<String> deleteFile(@Valid @RequestBody DeleteFileForm deleteFileForm, BindingResult bindingResult) {
         ApiResponseDto<String> apiResponseDto = new ApiResponseDto<>();
         movieService.deleteFileS3(deleteFileForm.getFileName());
         apiResponseDto.setMessage("File deleted successfully by key - " + deleteFileForm.getFileName());
         return  apiResponseDto;
     }
+
 }

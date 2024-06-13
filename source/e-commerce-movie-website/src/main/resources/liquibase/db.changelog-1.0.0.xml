@@ -280,6 +280,47 @@
             <column name="status" type="INT"/>
         </createTable>
     </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-31">
+        <createTable tableName="db_movies_liked_review">
+            <column autoIncrement="true" name="id" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="db_movies_liked_reviewPK"/>
+            </column>
+            <column name="emotion" type="INT"/>
+            <column name="account_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="review_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_by" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modified_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-32">
+        <addColumn tableName="db_movies_review">
+            <column name="parent_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-33">
+        <addForeignKeyConstraint baseColumnNames="review_id" baseTableName="db_movies_liked_review" constraintName="FKfkoepr3rl25w2urtrhbwuuihy" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_movies_review" validate="true"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-34">
+        <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_movies_liked_review" constraintName="FKo37gx66cqjnggddwvqv9ejn31" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_movies_account" validate="true"/>
+    </changeSet>
+    <changeSet author="GIGABYTE (generated)" id="1716407233965-35">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="db_movies_review" constraintName="FKqsa25y8labygrslh0ogmu7lxc" deferrable="false" initiallyDeferred="false" referencedColumnNames="id" referencedTableName="db_movies_review" validate="true"/>
+    </changeSet>
     <changeSet author="GIGABYTE (generated)" id="1716407233965-11">
         <addForeignKeyConstraint baseColumnNames="account_id" baseTableName="db_movies_vote_movie"
                                  constraintName="FK_DB_MOVIES_VOTE_MOVIE_ACCOUNT_ID" deferrable="false"

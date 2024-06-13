@@ -1,36 +1,43 @@
 package com.ecommerce.website.movie.service;
 
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.util.IOUtils;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.UploadFileDto;
 import com.ecommerce.website.movie.dto.UploadVideoDto;
-import com.ecommerce.website.movie.dto.VideoResponseDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
 import com.ecommerce.website.movie.form.UploadFileForm;
-import com.ecommerce.website.movie.form.UploadVideoForm;
-import com.ecommerce.website.movie.mapper.MovieMapper;
-import com.ecommerce.website.movie.model.Movie;
-import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.service.aws.S3Service;
-import com.mongodb.client.gridfs.GridFSBucket;
-import com.mongodb.client.gridfs.model.GridFSFile;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.gridfs.GridFsOperations;
-import org.springframework.data.mongodb.gridfs.GridFsTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -45,12 +52,12 @@ public class MovieService {
     private String region;
     @Autowired
     private S3Service s3Service;
-    @Autowired
-    private GridFsTemplate gridFsTemplate;
-    @Autowired
-    GridFsOperations gridFsOperations;
-    @Autowired
-    private MovieRepository movieRepository;
+
+    private final AmazonS3 s3Client;
+
+    public MovieService(AmazonS3 s3Client) {
+        this.s3Client = s3Client;
+    }
 
     public ApiResponseDto<UploadFileDto> uploadFileS3(UploadFileForm uploadFileForm) {
         ApiResponseDto<UploadFileDto> apiMessageDto = new ApiResponseDto<>();
@@ -118,21 +125,48 @@ public class MovieService {
         return apiResponseDto;
     }
 
-    public InputStream getVideoStreamById(String videoId) throws IOException {
-        GridFSFile gridFSFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(videoId)));
-        if (gridFSFile != null) {
-            return gridFsOperations.getResource(gridFSFile).getInputStream();
+    public Long takeDuration(String source) throws IOException, InterruptedException {
+        List<String> commands = new ArrayList<>();
+        commands.add("ffmpeg");
+        commands.add("-i");
+        commands.add(source);
+
+        Process process = new ProcessBuilder(commands)
+                .redirectErrorStream(true)
+                .start();
+
+        long result = 0;
+        // Read the output of the command
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.contains("Duration")) {
+                // Extract and print the duration information
+                result =  extractDurationInSeconds(line);
+                log.debug("Video Duration: " + result);
+                break;
+            }
         }
-        throw new FileNotFoundException("Video not found");
+        process.waitFor();
+        //startInputAndErrorThreads(process);
+        return result;
     }
 
-    public VideoResponseDto getVideo(String id) throws IllegalStateException, IOException {
-        GridFSFile file = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(id)));
-        VideoResponseDto video = new VideoResponseDto();
-        assert Objects.requireNonNull(file).getMetadata() != null;
-        video.setTitle(file.getMetadata().get("title").toString());
-        video.setStream(gridFsOperations.getResource(file).getInputStream());
-        return video;
+    private static long extractDurationInSeconds(String line) {
+        // Assuming the duration information is in the format "Duration: HH:MM:SS.ss,"
+        String[] parts = line.split(",")[0].split(":");
+        int hours = Integer.parseInt(parts[1].trim());
+        int minutes = Integer.parseInt(parts[2].trim());
+        double seconds = Double.parseDouble(parts[3].trim());
+
+        // Convert to total seconds
+        return (long) (hours * 3600L + minutes * 60L + seconds);
     }
 
+    public static File downloadVideo(String videoUrl) throws IOException {
+        URL url = new URL(videoUrl);
+        File tempFile = File.createTempFile("video", ".mp4");
+        FileUtils.copyURLToFile(url, tempFile);
+        return tempFile;
+    }
 }

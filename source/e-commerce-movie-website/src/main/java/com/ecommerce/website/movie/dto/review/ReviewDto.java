@@ -13,4 +13,7 @@ public class ReviewDto extends BaseInfo {
     MovieDto movie;
     AccountDto account;
     String content;
+    ReviewDto parent;
+    Integer replyCount;
+    Integer likeCount;
 }

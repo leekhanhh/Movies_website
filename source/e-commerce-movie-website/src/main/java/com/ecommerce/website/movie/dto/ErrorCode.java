@@ -93,4 +93,15 @@ public class ErrorCode {
     public static final String ACCOUNT_OTP_EXPIRED = "ERROR-OTP-002";
     public static final String ACCOUNT_OTP_INVALID = "ERROR-OTP-003";
 
+    /**
+     * Liked review error code
+     */
+    public static final String LIKED_REVIEW_ALREADY_EXIST = "ERROR-LIKED-REVIEW-000";
+    public static final String LIKED_REVIEW_NOT_FOUND = "ERROR-LIKED-REVIEW-001";
+
+    /**
+     * Duration error code
+     */
+    public static final String GET_DURATION_FAIL = "ERROR-DURATION-000";
+
 }

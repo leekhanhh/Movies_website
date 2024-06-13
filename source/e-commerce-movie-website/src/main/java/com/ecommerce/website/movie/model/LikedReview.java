@@ -1,5 +1,6 @@
 package com.ecommerce.website.movie.model;
 
+import com.ecommerce.website.movie.model.audit.Auditable;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = TablePrefix.PREFIX_TABLE + "liked_review")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LikedReview {
+public class LikedReview extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -22,5 +23,5 @@ public class LikedReview {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "review_id")
     Review review;
-    private String emotion;
+    Integer emotion;
 }

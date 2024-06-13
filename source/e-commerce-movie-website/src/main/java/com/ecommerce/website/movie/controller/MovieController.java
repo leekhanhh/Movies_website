@@ -231,51 +231,5 @@ public class MovieController {
         return apiResponseDto;
     }
 
-
-    @GetMapping("/videos/{id}")
-    public String getVideo(@PathVariable Long id, Model model) {
-        Movie movie = movieRepository.findById(id).orElse(null);
-        if (movie != null && movie.getVideoGridFs() != null) {
-            model.addAttribute("title", movie.getTitle());
-            model.addAttribute("url", "/videos/stream/" + movie.getVideoGridFs());
-            return model.toString();
-        } else {
-            return "error";
-        }
-    }
-
-    @PostMapping("/videos/add/{movieId}")
-    public ApiResponseDto<String> addMovieVideo(@PathVariable Long movieId, MultipartFile file) throws IOException {
-        ApiResponseDto<String> apiResponseDto = new ApiResponseDto<>();
-        Movie movie = movieRepository.findById(movieId).orElse(null);
-        if (movie == null) {
-            apiResponseDto.setResult(false);
-            apiResponseDto.setCode(ErrorCode.MOVIE_NOT_FOUND);
-            apiResponseDto.setMessage("Movie not found");
-        }
-        if (movie.getVideoGridFs() != null) {
-            apiResponseDto.setResult(false);
-            apiResponseDto.setCode(ErrorCode.MOVIE_VIDEO_EXISTED);
-            apiResponseDto.setMessage("Movie video existed");
-        }
-
-        DBObject metaData = new BasicDBObject();
-        metaData.put("type", "video");
-        metaData.put("title", movie.getTitle());
-        ObjectId videoId = gridFsTemplate.store(file.getInputStream(), file.getName(), file.getContentType(), metaData);
-
-        movie.setVideoGridFs(videoId.toString());
-        movieRepository.save(movie);
-
-        return apiResponseDto;
-    }
-    @GetMapping("/videos/stream/{id}")
-    public void streamVideo(@PathVariable String id, HttpServletResponse response) throws Exception {
-        VideoResponseDto video = movieService.getVideo(id);
-        if(video == null){
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        }
-        FileCopyUtils.copy(video.getStream(), response.getOutputStream());
-    }
 }
 

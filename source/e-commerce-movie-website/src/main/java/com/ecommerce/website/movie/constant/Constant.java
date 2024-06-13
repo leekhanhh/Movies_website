@@ -24,4 +24,12 @@ public class Constant {
     public static final Integer STATUS_ACTIVE = 1;
     public static final Integer STATUS_PENDING = 0;
 
+    //Review emotion
+    public static final Integer EMOTION_LIKE = 1;
+    public static final Integer EMOTION_LOVE = 2;
+    public static final Integer EMOTION_HAHA = 3;
+    public static final Integer EMOTION_WOW = 4;
+    public static final Integer EMOTION_SAD = 5;
+    public static final Integer EMOTION_ANGRY = 6;
+
 }
