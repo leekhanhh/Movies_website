@@ -77,18 +77,21 @@ public class WatchedMovieController {
 //    }
 
 
-    public void markMovieAsWatched(CreateWatchedMovieForm createWatchedMovieForm) {
-        if (createWatchedMovieForm.getAccountId() == null || createWatchedMovieForm.getMovieId() == null) {
+    public void markMovieAsWatched(Long accountId, Long movieId) {
+        if (accountId == null || movieId == null) {
             return;
         }
         LocalDateTime now = LocalDateTime.now();
         DateTime formattedDateTime = new DateTime(now.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        WatchedMovies watchedMovie = watchedMovieRepository.findByAccountIdAndMovieId(createWatchedMovieForm.getAccountId(), createWatchedMovieForm.getMovieId());
+        WatchedMovies watchedMovie = watchedMovieRepository.findByAccountIdAndMovieId(accountId, movieId);
         if (watchedMovie != null) {
             watchedMovie.setCreatedDate(formattedDateTime.toDate());
             watchedMovieRepository.save(watchedMovie);
             return;
         }
+        CreateWatchedMovieForm createWatchedMovieForm = new CreateWatchedMovieForm();
+        createWatchedMovieForm.setAccountId(accountId);
+        createWatchedMovieForm.setMovieId(movieId);
         watchedMovie = watchedMovieMapper.fromCreateWatchedMovieForm(createWatchedMovieForm);
         watchedMovie.setCreatedDate(formattedDateTime.toDate());
         watchedMovieRepository.save(watchedMovie);

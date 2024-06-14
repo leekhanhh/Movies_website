@@ -201,4 +201,12 @@ public class RatingController {
         return apiResponseDto;
     }
 
+    @GetMapping(value = "/get-rating-score/{movieId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<Double> getRatingScoreByMovieId(@PathVariable Long movieId) {
+        ApiResponseDto<Double> apiResponseDto = new ApiResponseDto<>();
+        Double ratingScore = ratingService.calculateAverageRating(movieId);
+        apiResponseDto.setResult(true);
+        apiResponseDto.setData(ratingScore);
+        return apiResponseDto;
+    }
 }

@@ -88,7 +88,7 @@ public class FileController {
     }
     @GetMapping(value = "/stream-video", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public Mono<ResponseEntity<byte[]>> streamVideo(@RequestHeader(value = "Range", required = false) String httpRangeList,
-                                                    @RequestParam("videoPath") String filePath, @Valid @RequestBody CreateWatchedMovieForm createWatchedMovieForm, BindingResult bindingResult) {
-        return Mono.just(movieService.prepareContent(filePath, httpRangeList, createWatchedMovieForm));
+                                                    @RequestParam("videoPath") String filePath, @RequestParam("accountId") Long accountId, @RequestParam("movieId") Long movieId) {
+        return Mono.just(movieService.prepareContent(filePath, httpRangeList, accountId, movieId));
     }
 }

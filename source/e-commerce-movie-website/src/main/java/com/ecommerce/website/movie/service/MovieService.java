@@ -16,6 +16,7 @@ import com.ecommerce.website.movie.service.aws.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -189,20 +190,11 @@ public class MovieService {
         return 0L;
     }
 
-    public byte[] readByteRange(String key, long start, long end) {
-        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key)
+    private byte[] readByteRange(String key, long start, long end) throws IOException {
+        GetObjectRequest rangeObjectRequest = new GetObjectRequest(bucketName, key)
                 .withRange(start, end);
-
-        S3Object object = s3Client.getObject(getObjectRequest);
-        try (S3ObjectInputStream inputStream = object.getObjectContent()) {
-            byte[] result = new byte[(int) (end - start) + 1];
-            int readBytes = inputStream.read(result);
-            return result;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return new byte[0];
+        S3Object objectPortion = s3Client.getObject(rangeObjectRequest);
+        return objectPortion.getObjectContent().readAllBytes();
     }
 
     public byte[] readByteRangeNew(String filename, long start, long end) throws IOException {
@@ -222,56 +214,46 @@ public class MovieService {
         }
     }
 
-    public ResponseEntity<byte[]> prepareContent(final String videoUrl, final String range, CreateWatchedMovieForm createWatchedMovieForm) {
-
+    public ResponseEntity<byte[]> prepareContent(final String videoUrl, final String range, final Long accountID, final Long movieID) {
         try {
             final String awsEndpoint = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
             if (!videoUrl.contains(awsEndpoint)) {
-                log.error("[AWS S3] Video not found!");
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             }
+
             final String fileKey = videoUrl.replace(awsEndpoint, "");
-            final String fileType = videoUrl.substring(videoUrl.lastIndexOf("."));
+            final String fileType = videoUrl.substring(videoUrl.lastIndexOf(".") + 1);
             long rangeStart = 0;
-            long rangeEnd = Constant.CHUNK_SIZE;
+            long rangeEnd = 1048576; // 1 MB chunk size
+
             GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, fileKey);
             S3Object s3Object = s3Client.getObject(getObjectRequest);
             long fileSize = s3Object.getObjectMetadata().getContentLength();
-            if (range == null) {
-                return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                        .header(Constant.CONTENT_TYPE, Constant.VIDEO_CONTENT + fileType)
-                        .header(Constant.ACCEPT_RANGES, Constant.BYTES)
-                        .header(Constant.CONTENT_LENGTH, String.valueOf(rangeEnd))
-                        .header(Constant.CONTENT_RANGE, Constant.BYTES + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
-                        .header(Constant.CONTENT_LENGTH, String.valueOf(fileSize))
-                        .body(readByteRangeNew(fileKey, rangeStart, rangeEnd)); // Read the object and convert it as bytes
-            }
-            String[] ranges = range.split("-");
-            rangeStart = Long.parseLong(ranges[0].substring(6));
-            if (ranges.length > 1) {
-                rangeEnd = Long.parseLong(ranges[1]);
-            } else {
-                rangeEnd = rangeStart + Constant.CHUNK_SIZE;
+
+            if (range != null) {
+                String[] ranges = range.split("-");
+                rangeStart = Long.parseLong(ranges[0].substring(6));
+                if (ranges.length > 1) {
+                    rangeEnd = Long.parseLong(ranges[1]);
+                } else {
+                    rangeEnd = rangeStart + 1048576;
+                }
+                rangeEnd = Math.min(rangeEnd, fileSize - 1);
             }
 
-            rangeEnd = Math.min(rangeEnd, fileSize - 1);
-            final byte[] data = readByteRangeNew(fileKey, rangeStart, rangeEnd);
-            final String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
+            byte[] data = readByteRange(fileKey, rangeStart, rangeEnd);
+            String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
+            String contentRange = "bytes " + rangeStart + "-" + rangeEnd + "/" + fileSize;
 
-            watchedMovieController.markMovieAsWatched(createWatchedMovieForm);
-
-            HttpStatus httpStatus = HttpStatus.PARTIAL_CONTENT;
-            if (rangeEnd >= fileSize) {
-                httpStatus = HttpStatus.OK;
-            }
-            return ResponseEntity.status(httpStatus)
-                    .header(Constant.CONTENT_TYPE, Constant.VIDEO_CONTENT + fileType)
-                    .header(Constant.ACCEPT_RANGES, Constant.BYTES)
-                    .header(Constant.CONTENT_LENGTH, contentLength)
-                    .header(Constant.CONTENT_RANGE, Constant.BYTES + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
+            HttpStatus status = (rangeStart == 0 && rangeEnd >= fileSize) ? HttpStatus.OK : HttpStatus.PARTIAL_CONTENT;
+            return ResponseEntity.status(status)
+                    .header(HttpHeaders.CONTENT_TYPE, "video/" + fileType)
+                    .header(HttpHeaders.ACCEPT_RANGES, "bytes")
+                    .header(HttpHeaders.CONTENT_LENGTH, contentLength)
+                    .header(HttpHeaders.CONTENT_RANGE, contentRange)
                     .body(data);
+
         } catch (IOException e) {
-            log.error("Exception while reading the file {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

@@ -23,6 +23,19 @@ public class RatingService {
         return (positiveRatings / (double) ratings.size()) * 100.0;
     }
 
+    public double calculateAverageRating(Long movieId) {
+        List<Rating> ratings = ratingRepository.findByMovieId(movieId);
+        if (ratings.isEmpty()) {
+            return 0.0;
+        }
+
+        double sum = ratings.stream()
+                .mapToDouble(Rating::getEvaluation)
+                .sum();
+
+        return sum / ratings.size();
+    }
+
     public boolean isMoviePositivelyRated(Long movieId) {
         double audienceScore = calculateAudienceScore(movieId);
         return audienceScore >= 60.0;

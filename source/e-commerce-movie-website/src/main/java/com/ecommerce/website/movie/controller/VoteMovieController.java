@@ -133,4 +133,6 @@ public class VoteMovieController {
         apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }
+
+
 }
