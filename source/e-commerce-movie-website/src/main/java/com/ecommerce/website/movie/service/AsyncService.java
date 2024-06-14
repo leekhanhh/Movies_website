@@ -26,6 +26,6 @@ public class AsyncService {
                 log.error("Failed to send email to " + email, e);
             }
         };
-        asyncConfig.threadPoolTaskExecutor().execute(task);
+        asyncConfig.threadPoolTaskExecutorForAsyncTask().execute(task);
     }
 }

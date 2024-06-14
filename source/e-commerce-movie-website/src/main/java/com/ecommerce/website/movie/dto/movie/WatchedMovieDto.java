@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class WatchedMovieDto extends BaseInfo {
     Long accountId;
-    MovieDto movie;
+    Long movieId;
 }

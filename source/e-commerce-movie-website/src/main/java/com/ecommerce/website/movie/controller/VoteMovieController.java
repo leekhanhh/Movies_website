@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.Convert;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
@@ -120,7 +121,7 @@ public class VoteMovieController {
                     sortedMovieList.add(movieRepository.findById(x.getKey()).orElse(null));
                 });
 
-        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(movieMapper.toClientMovieDtoList(sortedMovieList), voteMoviePage.getTotalElements(), voteMoviePage.getTotalPages());
+        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(movieMapper.toClientMovieDtoList(sortedMovieList), Long.parseLong(String.valueOf(sortedMovieList.size())), voteMoviePage.getTotalPages());
         apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }

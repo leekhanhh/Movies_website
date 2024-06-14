@@ -32,4 +32,16 @@ public class Constant {
     public static final Integer EMOTION_SAD = 5;
     public static final Integer EMOTION_ANGRY = 6;
 
+    //Http
+    public static final String VIDEO = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
+
+    public static final String CONTENT_TYPE = "Content-Type";
+    public static final String CONTENT_LENGTH = "Content-Length";
+    public static final String VIDEO_CONTENT = "video/";
+    public static final String CONTENT_RANGE = "Content-Range";
+    public static final String ACCEPT_RANGES = "Accept-Ranges";
+    public static final String BYTES = "bytes";
+    public static final int CHUNK_SIZE = 314700;
+    public static final int BYTE_RANGE = 1024;
+
 }

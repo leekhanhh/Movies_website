@@ -4,7 +4,6 @@ import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.form.movie.CreateMovieForm;
 import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
 import com.ecommerce.website.movie.model.Movie;
-import com.ecommerce.website.movie.model.MovieGenre;
 import com.ecommerce.website.movie.model.Rating;
 import com.ecommerce.website.movie.model.VoteMovie;
 import org.mapstruct.*;

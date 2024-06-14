@@ -3,6 +3,7 @@ package com.ecommerce.website.movie.model;
 import com.ecommerce.website.movie.model.audit.Auditable;
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;

@@ -1,44 +1,37 @@
 package com.ecommerce.website.movie.service;
 
-import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.util.IOUtils;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import com.ecommerce.website.movie.constant.Constant;
+import com.ecommerce.website.movie.controller.WatchedMovieController;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.UploadFileDto;
 import com.ecommerce.website.movie.dto.UploadVideoDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
 import com.ecommerce.website.movie.form.UploadFileForm;
+import com.ecommerce.website.movie.form.movie.watchedmovie.CreateWatchedMovieForm;
 import com.ecommerce.website.movie.service.aws.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
@@ -52,7 +45,8 @@ public class MovieService {
     private String region;
     @Autowired
     private S3Service s3Service;
-
+    @Autowired
+    WatchedMovieController watchedMovieController;
     private final AmazonS3 s3Client;
 
     public MovieService(AmazonS3 s3Client) {
@@ -168,5 +162,117 @@ public class MovieService {
         File tempFile = File.createTempFile("video", ".mp4");
         FileUtils.copyURLToFile(url, tempFile);
         return tempFile;
+    }
+
+    private String getFilePath(String fileName) {
+        S3Object s3Object = s3Client.getObject(bucketName, fileName);
+        URL url = null;
+        try {
+            url = s3Object.getObjectContent().getHttpRequest().getURI().toURL();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (url != null) {
+            return new File(url.getFile()).getAbsolutePath();
+        } else {
+            throw new RuntimeException("Cannot retrieve file URL from S3 for " + fileName);
+        }
+    }
+
+    private Long sizeFromFile(Path path) {
+        try {
+            return Files.size(path);
+        } catch (IOException ioException) {
+            log.error("Error while getting the file size", ioException);
+        }
+        return 0L;
+    }
+
+    public byte[] readByteRange(String key, long start, long end) {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, key)
+                .withRange(start, end);
+
+        S3Object object = s3Client.getObject(getObjectRequest);
+        try (S3ObjectInputStream inputStream = object.getObjectContent()) {
+            byte[] result = new byte[(int) (end - start) + 1];
+            int readBytes = inputStream.read(result);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new byte[0];
+    }
+
+    public byte[] readByteRangeNew(String filename, long start, long end) throws IOException {
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, filename)
+                .withRange(start, end);
+        S3Object s3Object = s3Client.getObject(getObjectRequest);
+
+        try (InputStream inputStream = s3Object.getObjectContent();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        }
+    }
+
+    public ResponseEntity<byte[]> prepareContent(final String videoUrl, final String range, CreateWatchedMovieForm createWatchedMovieForm) {
+
+        try {
+            final String awsEndpoint = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
+            if (!videoUrl.contains(awsEndpoint)) {
+                log.error("[AWS S3] Video not found!");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            final String fileKey = videoUrl.replace(awsEndpoint, "");
+            final String fileType = videoUrl.substring(videoUrl.lastIndexOf("."));
+            long rangeStart = 0;
+            long rangeEnd = Constant.CHUNK_SIZE;
+            GetObjectRequest getObjectRequest = new GetObjectRequest(bucketName, fileKey);
+            S3Object s3Object = s3Client.getObject(getObjectRequest);
+            long fileSize = s3Object.getObjectMetadata().getContentLength();
+            if (range == null) {
+                return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                        .header(Constant.CONTENT_TYPE, Constant.VIDEO_CONTENT + fileType)
+                        .header(Constant.ACCEPT_RANGES, Constant.BYTES)
+                        .header(Constant.CONTENT_LENGTH, String.valueOf(rangeEnd))
+                        .header(Constant.CONTENT_RANGE, Constant.BYTES + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
+                        .header(Constant.CONTENT_LENGTH, String.valueOf(fileSize))
+                        .body(readByteRangeNew(fileKey, rangeStart, rangeEnd)); // Read the object and convert it as bytes
+            }
+            String[] ranges = range.split("-");
+            rangeStart = Long.parseLong(ranges[0].substring(6));
+            if (ranges.length > 1) {
+                rangeEnd = Long.parseLong(ranges[1]);
+            } else {
+                rangeEnd = rangeStart + Constant.CHUNK_SIZE;
+            }
+
+            rangeEnd = Math.min(rangeEnd, fileSize - 1);
+            final byte[] data = readByteRangeNew(fileKey, rangeStart, rangeEnd);
+            final String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
+
+            watchedMovieController.markMovieAsWatched(createWatchedMovieForm);
+
+            HttpStatus httpStatus = HttpStatus.PARTIAL_CONTENT;
+            if (rangeEnd >= fileSize) {
+                httpStatus = HttpStatus.OK;
+            }
+            return ResponseEntity.status(httpStatus)
+                    .header(Constant.CONTENT_TYPE, Constant.VIDEO_CONTENT + fileType)
+                    .header(Constant.ACCEPT_RANGES, Constant.BYTES)
+                    .header(Constant.CONTENT_LENGTH, contentLength)
+                    .header(Constant.CONTENT_RANGE, Constant.BYTES + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
+                    .body(data);
+        } catch (IOException e) {
+            log.error("Exception while reading the file {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
