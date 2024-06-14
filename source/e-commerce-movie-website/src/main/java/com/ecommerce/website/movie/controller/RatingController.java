@@ -3,9 +3,11 @@ package com.ecommerce.website.movie.controller;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
+import com.ecommerce.website.movie.dto.movie.MovieDto;
 import com.ecommerce.website.movie.dto.rating.RatingDto;
 import com.ecommerce.website.movie.form.rating.CreateRatingForm;
 import com.ecommerce.website.movie.form.rating.UpdateRatingForm;
+import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.mapper.RatingMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.Movie;
@@ -21,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.h2.expression.condition.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
@@ -32,6 +35,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/rating")
@@ -48,6 +52,8 @@ public class RatingController {
     UserRepository userRepository;
     @Autowired
     RatingService ratingService;
+    @Autowired
+    MovieMapper movieMapper;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -155,8 +161,8 @@ public class RatingController {
     }
 
     @GetMapping(value = "/list-recommending-movie", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponseDto<ResponseListDto<RatingDto>> listRecommendingMovie(RatingCriteria ratingCriteria, Pageable pageable){
-        ApiResponseDto<ResponseListDto<RatingDto>> apiResponseDto = new ApiResponseDto<>();
+    public ApiResponseDto<ResponseListDto<MovieDto>> listRecommendingMovie(RatingCriteria ratingCriteria, Pageable pageable){
+        ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
         Page<Rating> ratingPage = ratingRepository.findAll(ratingCriteria.getSpecification(), pageable);
 
         Set<Rating> recommendingRatingList = new HashSet<>();
@@ -178,8 +184,18 @@ public class RatingController {
             apiResponseDto.setMessage("No recommending movie found!");
             return apiResponseDto;
         }
+        List<Movie> movieList = new ArrayList<>();
+        for(Rating rating : recommendingRatingList){
+            Movie movie = movieRepository.findById(rating.getMovie().getId()).orElse(null);
+            if (movie != null && !movieList.contains(movie)) {
+                movieList.add(movie);
+            }
+        }
+        int start = Math.toIntExact(pageable.getOffset());
+        int end = Math.min((start + pageable.getPageSize()), movieList.size());
+        Page<Movie> recommendingMoviePage = new PageImpl<>(movieList.subList(start, end), pageable, movieList.size());
 
-        ResponseListDto<RatingDto> ratingDtoList =  new ResponseListDto(ratingMapper.toRatingDtoRecommendedMovieList(recommendingRatingList), ratingPage.getTotalElements(), ratingPage.getTotalPages());
+        ResponseListDto<MovieDto> ratingDtoList =  new ResponseListDto(movieMapper.toClientMovieDtoList(recommendingMoviePage.getContent()), recommendingMoviePage.getTotalElements(), recommendingMoviePage.getTotalPages());
         apiResponseDto.setData(ratingDtoList);
         apiResponseDto.setMessage("Get rating list successfully!");
         return apiResponseDto;

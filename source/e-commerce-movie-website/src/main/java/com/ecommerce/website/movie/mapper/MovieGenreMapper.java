@@ -18,4 +18,5 @@ public interface MovieGenreMapper {
     @IterableMapping(elementTargetType = MovieGenreDto.class, qualifiedByName = "toMovieGenreDto")
     @Named("toMovieGenreDtoList")
     List<MovieGenreDto> toMovieGenreDtoList(List<MovieGenre> movieGenreList);
+
 }
