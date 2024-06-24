@@ -227,13 +227,15 @@ public class MovieController {
         return apiResponseDto;
     }
 
-    @GetMapping(value = "/auto-complete-movie", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/auto-complete-movie-serries", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<ResponseListDto<MovieDto>> autoCompleteMovie(
             @RequestParam(required = false) String title,
             MovieCriteria movieCriteria,
             Pageable pageable) {
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        Long categoryId = categoryRepository.findFirstByName("Series").getId();
 
+        movieCriteria.setCategoryId(categoryId);
         Page<Movie> moviePage = movieRepository.findAll(movieCriteria.getSpecification(), pageable);
         Page<MovieDto> movieDtoPage = moviePage.map(movie -> {
             MovieDto movieDto = new MovieDto();
