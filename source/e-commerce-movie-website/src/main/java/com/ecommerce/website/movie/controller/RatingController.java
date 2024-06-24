@@ -9,18 +9,15 @@ import com.ecommerce.website.movie.form.rating.CreateRatingForm;
 import com.ecommerce.website.movie.form.rating.UpdateRatingForm;
 import com.ecommerce.website.movie.mapper.MovieMapper;
 import com.ecommerce.website.movie.mapper.RatingMapper;
-import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.Rating;
 import com.ecommerce.website.movie.model.User;
 import com.ecommerce.website.movie.model.criteria.RatingCriteria;
-import com.ecommerce.website.movie.repository.AccountRepository;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.repository.RatingRepository;
 import com.ecommerce.website.movie.repository.UserRepository;
 import com.ecommerce.website.movie.service.RatingService;
 import lombok.extern.slf4j.Slf4j;
-import org.h2.expression.condition.ExistsPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/rating")
@@ -206,7 +202,7 @@ public class RatingController {
         ApiResponseDto<Double> apiResponseDto = new ApiResponseDto<>();
         Double ratingScore = ratingService.calculateAverageRating(movieId);
         apiResponseDto.setResult(true);
-        apiResponseDto.setData(ratingScore);
+        apiResponseDto.setData(Math.round(ratingScore * 10.0) / 10.0);
         return apiResponseDto;
     }
 }

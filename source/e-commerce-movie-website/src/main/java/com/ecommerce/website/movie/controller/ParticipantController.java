@@ -47,7 +47,14 @@ public class ParticipantController {
             return apiResponseDto;
         }
 
-        Participant participant = participantMapper.formCreateParticipant(participantForm);
+        Participant participant = participantRepository.findByNameAndMovieId(participantForm.getName(), participantForm.getMovieId());
+        if (participant != null) {
+            apiResponseDto.setCode(ErrorCode.PARTICIPANT_DUPLICATED);
+            apiResponseDto.setMessage("Participant duplicated in this movie!");
+            return apiResponseDto;
+        }
+
+        participant = participantMapper.formCreateParticipant(participantForm);
         participant.setMovie(movie);
         participantRepository.save(participant);
 

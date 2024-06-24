@@ -16,6 +16,8 @@ import com.ecommerce.website.movie.repository.WatchedMovieRepository;
 import com.ecommerce.website.movie.repository.MovieGenreRepository;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.service.MovieService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,6 +55,8 @@ public class MovieController {
     GridFsTemplate gridFsTemplate;
     @Autowired
     MovieGenreMapper movieGenreMapper;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -94,6 +98,7 @@ public class MovieController {
         if (movie != null) {
             movieRepository.delete(movie);
             movieService.deleteVideoS3ByLink(movie.getVideoGridFs());
+            movieService.deleteFileS3(movie.getImagePath());
             apiResponseDto.setMessage("Movie deleted successfully!");
         } else {
             apiResponseDto.setMessage("Movie not found!");
@@ -222,5 +227,30 @@ public class MovieController {
         return apiResponseDto;
     }
 
+    @GetMapping(value = "/auto-complete-movie", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<MovieDto>> autoCompleteMovie(
+            @RequestParam(required = false) String title,
+            MovieCriteria movieCriteria,
+            Pageable pageable) {
+        ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+
+        Page<Movie> moviePage = movieRepository.findAll(movieCriteria.getSpecification(), pageable);
+        Page<MovieDto> movieDtoPage = moviePage.map(movie -> {
+            MovieDto movieDto = new MovieDto();
+            movieDto.setId(movie.getId());
+            movieDto.setTitle(movie.getTitle());
+            return movieDto;
+        });
+
+
+        ResponseListDto<MovieDto> responseListDto = new ResponseListDto(
+                movieDtoPage.getContent(),
+                moviePage.getTotalElements(),
+                moviePage.getTotalPages());
+
+        apiResponseDto.setData(responseListDto);
+        apiResponseDto.setMessage("Auto complete movie successfully!");
+        return apiResponseDto;
+    }
 }
 

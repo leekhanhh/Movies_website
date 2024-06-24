@@ -104,4 +104,9 @@ public class ErrorCode {
      */
     public static final String GET_DURATION_FAIL = "ERROR-DURATION-000";
 
+    /**
+     * Participant error code
+     */
+    public static final String PARTICIPANT_DUPLICATED = "ERROR-PARTICIPANT-001";
+
 }

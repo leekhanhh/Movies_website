@@ -10,7 +10,6 @@ import com.ecommerce.website.movie.form.category.UpdateCategoryForm;
 import com.ecommerce.website.movie.mapper.CategoryMapper;
 import com.ecommerce.website.movie.model.Category;
 import com.ecommerce.website.movie.model.criteria.CategoryCriteria;
-import com.ecommerce.website.movie.model.criteria.MovieCriteria;
 import com.ecommerce.website.movie.repository.CategoryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 
 @RestController
@@ -77,9 +74,6 @@ public class CategoryController {
             apiResponseDto.setCode(ErrorCode.CATEGORY_NOT_FOUND);
             apiResponseDto.setMessage("Category not found");
             return apiResponseDto;
-        }
-        if (!category.getName().equals(updateCategoryForm.getName())) {
-            category.setName(updateCategoryForm.getName());
         }
 
         categoryMapper.mappingUpdateForm(updateCategoryForm, category);

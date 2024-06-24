@@ -20,7 +20,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Convert;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;

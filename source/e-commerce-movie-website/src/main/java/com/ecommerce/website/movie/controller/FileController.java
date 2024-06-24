@@ -8,22 +8,22 @@ import com.ecommerce.website.movie.dto.UploadVideoDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
 import com.ecommerce.website.movie.form.DeleteFileForm;
 import com.ecommerce.website.movie.form.UploadFileForm;
-import com.ecommerce.website.movie.form.movie.watchedmovie.CreateWatchedMovieForm;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.*;
-import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 import javax.validation.Valid;
 import java.util.concurrent.TimeUnit;
+
+import static org.apache.http.entity.ContentType.APPLICATION_OCTET_STREAM;
 
 @RestController
 @RequestMapping("/v1/file")
@@ -37,7 +37,8 @@ public class FileController {
     MovieRepository movieRepository;
     @Autowired
     private AmazonS3Client amazonS3Client;
-
+    @Autowired
+    private WatchedMovieController watchedMovieController;
     @Autowired
     private AmazonS3 amazonS3;
 
@@ -85,10 +86,5 @@ public class FileController {
         movieService.deleteFileS3(deleteFileForm.getFileName());
         apiResponseDto.setMessage("File deleted successfully by key - " + deleteFileForm.getFileName());
         return apiResponseDto;
-    }
-    @GetMapping(value = "/stream-video", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public Mono<ResponseEntity<byte[]>> streamVideo(@RequestHeader(value = "Range", required = false) String httpRangeList,
-                                                    @RequestParam("videoPath") String filePath, @RequestParam("accountId") Long accountId, @RequestParam("movieId") Long movieId) {
-        return Mono.just(movieService.prepareContent(filePath, httpRangeList, accountId, movieId));
     }
 }

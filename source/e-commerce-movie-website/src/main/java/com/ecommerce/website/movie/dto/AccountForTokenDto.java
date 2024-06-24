@@ -13,6 +13,4 @@ public class AccountForTokenDto {
     private String email;
     @ApiModelProperty(name = "fullName")
     private String fullName;
-    @ApiModelProperty(name = "isSuperAdmin")
-    private Boolean isSuperAdmin;
 }

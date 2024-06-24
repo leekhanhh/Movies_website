@@ -7,7 +7,6 @@ import com.ecommerce.website.movie.dto.review.ReviewDto;
 import com.ecommerce.website.movie.form.review.CreateReviewFrom;
 import com.ecommerce.website.movie.form.review.UpdateReviewForm;
 import com.ecommerce.website.movie.mapper.ReviewMapper;
-import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.Review;
 import com.ecommerce.website.movie.model.User;
@@ -26,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-import java.util.List;
-
 @RestController
 @RequestMapping("/v1/review")
 @CrossOrigin(origins = "*", allowedHeaders = "*")

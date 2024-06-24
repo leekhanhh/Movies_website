@@ -6,6 +6,7 @@ import com.ecommerce.website.movie.form.movie.UpdateMovieForm;
 import com.ecommerce.website.movie.model.Movie;
 import com.ecommerce.website.movie.model.Rating;
 import com.ecommerce.website.movie.model.VoteMovie;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.mapstruct.*;
 
 import java.util.List;
@@ -75,6 +76,10 @@ public interface MovieMapper {
     @Named("autoCompleteDtoMovie")
     @BeanMapping(ignoreByDefault = true)
     MovieDto autoCompleteDtoMovie(Movie movie);
+
+    @IterableMapping(elementTargetType = MovieDto.class, qualifiedByName = "autoCompleteDtoMovie")
+    List<MovieDto> autoCompleteDtoMovieList(List<Movie> movieList);
+
 
     private Integer calculateVoteCount(List<VoteMovie> voteMovies) {
         return (voteMovies == null) ? 0 : voteMovies.size();

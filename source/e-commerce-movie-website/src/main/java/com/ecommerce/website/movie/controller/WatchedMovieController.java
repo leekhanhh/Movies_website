@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @org.springframework.web.bind.annotation.RequestMapping("/v1/watched-movie")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
-public class WatchedMovieController {
+public class    WatchedMovieController {
     @Autowired
     WatchedMovieRepository watchedMovieRepository;
     @Autowired
@@ -45,38 +45,6 @@ public class WatchedMovieController {
     private MongoTemplate mongoTemplate;
     @Autowired
     MovieMapper movieMapper;
-//
-//    @PostMapping(value = "/create-watched-movie", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-//    @Transactional
-//    @ApiIgnore
-//    public ApiResponseDto<WatchedMovies> createWatchedMovie(@Valid @RequestBody CreateWatchedMovieForm createWatchedMovieForm, BindingResult bindingResult) {
-//        ApiResponseDto<WatchedMovies> apiResponseDto = new ApiResponseDto<>();
-//        Optional<Movie> movie = movieRepository.findById(createWatchedMovieForm.getMovieId());
-//        if (movie == null) {
-//            apiResponseDto.setResult(false);
-//            apiResponseDto.setCode(com.ecommerce.website.movie.dto.ErrorCode.MOVIE_NOT_FOUND);
-//            apiResponseDto.setMessage("Movie not found!");
-//            return apiResponseDto;
-//        }
-//        WatchedMovies watchedMovies = watchedMovieMapper.fromCreateWatchedMovieForm(createWatchedMovieForm);
-//        watchedMovieRepository.save(watchedMovies);
-//        apiResponseDto.setResult(true);
-//        apiResponseDto.setData(watchedMovies);
-//        return apiResponseDto;
-//    }
-
-//    @GetMapping(value = "/get-watched-movie-by-account-id", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
-//    public ApiResponseDto<ResponseListDto<WatchedMovies>> getWatchedMovieByAccountId(@RequestParam("accountId") Long accountId, WatchedMovieCriteria watchedMovieCriteria, Pageable pageable){
-//        ApiResponseDto<ResponseListDto<WatchedMovies>> apiResponseDto = new ApiResponseDto<>();
-//        watchedMovieCriteria.setAccountId(accountId);
-//        Page<WatchedMovies> watchedMovies = watchedMovieRepository.findAll(watchedMovieCriteria.toSpecification(), pageable);
-//        ResponseListDto<WatchedMovies> responseListDto = new ResponseListDto(watchedMovieMapper.toWatchedMovieDtoList(watchedMovies.getContent()), watchedMovies.getTotalElements(), watchedMovies.getTotalPages());
-//        apiResponseDto.setResult(true);
-//        apiResponseDto.setData(responseListDto);
-//        return apiResponseDto;
-//    }
-
-
     public void markMovieAsWatched(Long accountId, Long movieId) {
         if (accountId == null || movieId == null) {
             return;

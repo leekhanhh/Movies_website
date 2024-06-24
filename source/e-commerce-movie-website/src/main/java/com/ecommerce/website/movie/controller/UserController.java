@@ -4,17 +4,13 @@ import com.ecommerce.website.movie.constant.Constant;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
 import com.ecommerce.website.movie.dto.ResponseListDto;
-import com.ecommerce.website.movie.dto.account.AccountDto;
 import com.ecommerce.website.movie.dto.user.UserDto;
-import com.ecommerce.website.movie.form.account.CreateAccountForm;
-import com.ecommerce.website.movie.form.account.UpdateAccountForm;
 import com.ecommerce.website.movie.form.user.CreateUserForm;
 import com.ecommerce.website.movie.form.user.UpdateUserForm;
 import com.ecommerce.website.movie.mapper.AccountMapper;
 import com.ecommerce.website.movie.mapper.UserMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.User;
-import com.ecommerce.website.movie.model.criteria.AccountCriteria;
 import com.ecommerce.website.movie.model.criteria.UserCriteria;
 import com.ecommerce.website.movie.repository.AccountRepository;
 import com.ecommerce.website.movie.repository.UserRepository;
@@ -28,12 +24,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.checkerframework.checker.nullness.Opt.orElse;
 
 @org.springframework.web.bind.annotation.RestController
 @org.springframework.web.bind.annotation.RequestMapping("/v1/user")
@@ -89,7 +79,7 @@ public class UserController extends BaseController{
         if (account == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.USER_ACCOUNT_NOT_FOUND);
-            apiResponseDto.setMessage("User not found");
+            apiResponseDto.setMessage("Account not found");
             return apiResponseDto;
         }
         if(user == null){
