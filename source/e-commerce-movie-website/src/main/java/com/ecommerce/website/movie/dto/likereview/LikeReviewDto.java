@@ -7,6 +7,7 @@ import lombok.Data;
 public class LikeReviewDto{
     private Long id;
     private Long accountId;
-    private ReviewDto review;
+    private Long movieId;
+    private Long reviewId;
     private Integer emotion;
 }

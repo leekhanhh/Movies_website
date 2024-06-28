@@ -17,6 +17,7 @@ public class LikedReviewCriteria implements Serializable {
     private Long accountId;
     private Long reviewId;
     private Integer emotion;
+    private Long movieId;
     public Specification<LikedReview> getSpecification() {
         return new Specification<LikedReview>() {
             private static final long serialVersionUID = 1L;
@@ -31,6 +32,9 @@ public class LikedReviewCriteria implements Serializable {
                 }
                 if (getEmotion() != null) {
                     predicates.add(criteriaBuilder.equal(root.get("emotion"), getEmotion()));
+                }
+                if(getMovieId() != null){
+                    predicates.add(criteriaBuilder.equal(root.get("review").get("movie").get("id"), getMovieId()));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }
