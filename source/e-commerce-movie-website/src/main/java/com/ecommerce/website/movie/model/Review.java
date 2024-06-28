@@ -27,10 +27,6 @@ public class Review extends Auditable<String> {
     @JoinColumn(name = "movie_id")
     Movie movie;
     String content;
-    @ManyToOne(fetch = FetchType.LAZY)
-    Review parent;
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    List<Review> replies = new ArrayList<>();
     @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     List<LikedReview> likedReviews = new ArrayList<>();
 }

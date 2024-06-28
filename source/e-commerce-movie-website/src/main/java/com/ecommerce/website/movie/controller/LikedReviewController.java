@@ -3,16 +3,21 @@ package com.ecommerce.website.movie.controller;
 import com.ecommerce.website.movie.constant.Constant;
 import com.ecommerce.website.movie.dto.ApiResponseDto;
 import com.ecommerce.website.movie.dto.ErrorCode;
+import com.ecommerce.website.movie.dto.ResponseListDto;
+import com.ecommerce.website.movie.dto.likereview.LikeReviewDto;
 import com.ecommerce.website.movie.form.likedreview.CreateLikedReviewForm;
 import com.ecommerce.website.movie.form.likedreview.UpdateLikedReviewForm;
 import com.ecommerce.website.movie.mapper.LikedReviewMapper;
 import com.ecommerce.website.movie.model.LikedReview;
 import com.ecommerce.website.movie.model.Review;
+import com.ecommerce.website.movie.model.criteria.LikedReviewCriteria;
 import com.ecommerce.website.movie.repository.AccountRepository;
 import com.ecommerce.website.movie.repository.LikedReviewRepository;
 import com.ecommerce.website.movie.repository.ReviewRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +29,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/v1/liked-reviews")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class LikedReviewController{
+public class LikedReviewController extends BaseController{
     @Autowired
     LikedReviewRepository likedReviewRepository;
     @Autowired
@@ -53,41 +58,41 @@ public class LikedReviewController{
             return apiResponseDto;
         }
 
-        likedReview = new LikedReview();
-        if (likedReviewForm.getEmotion() == 1)
-        {
-            likedReview.setEmotion(Constant.EMOTION_LIKE);
-            apiResponseDto.setMessage("Emotion is like");
-        }
-        else if(likedReviewForm.getEmotion() == 2)
-        {
-            likedReview.setEmotion(Constant.EMOTION_LOVE);
-            apiResponseDto.setMessage("Emotion is love");
-        }
-        else if (likedReviewForm.getEmotion() == 3)
-        {
-            likedReview.setEmotion(Constant.EMOTION_HAHA);
-            apiResponseDto.setMessage("Emotion is haha");
-        }
-        else if (likedReviewForm.getEmotion() == 4)
-        {
-            likedReview.setEmotion(Constant.EMOTION_WOW);
-            apiResponseDto.setMessage("Emotion is wow");
-        }
-        else if (likedReviewForm.getEmotion() == 5)
-        {
-            likedReview.setEmotion(Constant.EMOTION_SAD);
-            apiResponseDto.setMessage("Emotion is sad");
-        }
-        else if (likedReviewForm.getEmotion() == 6)
-        {
-            likedReview.setEmotion(Constant.EMOTION_ANGRY);
-            apiResponseDto.setMessage("Emotion is angry");
-        }
+//        likedReview = new LikedReview();
+//        if (likedReviewForm.getEmotion() == 1)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_LIKE);
+//            apiResponseDto.setMessage("Emotion is like");
+//        }
+//        else if(likedReviewForm.getEmotion() == 2)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_LOVE);
+//            apiResponseDto.setMessage("Emotion is love");
+//        }
+//        else if (likedReviewForm.getEmotion() == 3)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_HAHA);
+//            apiResponseDto.setMessage("Emotion is haha");
+//        }
+//        else if (likedReviewForm.getEmotion() == 4)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_WOW);
+//            apiResponseDto.setMessage("Emotion is wow");
+//        }
+//        else if (likedReviewForm.getEmotion() == 5)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_SAD);
+//            apiResponseDto.setMessage("Emotion is sad");
+//        }
+//        else if (likedReviewForm.getEmotion() == 6)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_ANGRY);
+//            apiResponseDto.setMessage("Emotion is angry");
+//        }
 
         likedReviewRepository.save(likedReviewMapper.fromCreateLikedReviewToEntity(likedReviewForm));
         apiResponseDto.setResult(true);
-        apiResponseDto.setData(likedReview.getId());
+        apiResponseDto.setMessage("Liked review created successfully!");
         return apiResponseDto;
     }
 
@@ -104,36 +109,36 @@ public class LikedReviewController{
         }
 
         likedReviewMapper.updateLikedReviewFromEntity(updateLikedReviewForm, likedReview);
-        if (updateLikedReviewForm.getEmotion() == 1)
-        {
-            likedReview.setEmotion(Constant.EMOTION_LIKE);
-            apiResponseDto.setMessage("Emotion is like");
-        }
-        else if(updateLikedReviewForm.getEmotion() == 2)
-        {
-            likedReview.setEmotion(Constant.EMOTION_LOVE);
-            apiResponseDto.setMessage("Emotion is love");
-        }
-        else if (updateLikedReviewForm.getEmotion() == 3)
-        {
-            likedReview.setEmotion(Constant.EMOTION_HAHA);
-            apiResponseDto.setMessage("Emotion is haha");
-        }
-        else if (updateLikedReviewForm.getEmotion() == 4)
-        {
-            likedReview.setEmotion(Constant.EMOTION_WOW);
-            apiResponseDto.setMessage("Emotion is wow");
-        }
-        else if (updateLikedReviewForm.getEmotion() == 5)
-        {
-            likedReview.setEmotion(Constant.EMOTION_SAD);
-            apiResponseDto.setMessage("Emotion is sad");
-        }
-        else if (updateLikedReviewForm.getEmotion() == 6)
-        {
-            likedReview.setEmotion(Constant.EMOTION_ANGRY);
-            apiResponseDto.setMessage("Emotion is angry");
-        }
+//        if (updateLikedReviewForm.getEmotion() == 1)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_LIKE);
+//            apiResponseDto.setMessage("Emotion is like");
+//        }
+//        else if(updateLikedReviewForm.getEmotion() == 2)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_LOVE);
+//            apiResponseDto.setMessage("Emotion is love");
+//        }
+//        else if (updateLikedReviewForm.getEmotion() == 3)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_HAHA);
+//            apiResponseDto.setMessage("Emotion is haha");
+//        }
+//        else if (updateLikedReviewForm.getEmotion() == 4)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_WOW);
+//            apiResponseDto.setMessage("Emotion is wow");
+//        }
+//        else if (updateLikedReviewForm.getEmotion() == 5)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_SAD);
+//            apiResponseDto.setMessage("Emotion is sad");
+//        }
+//        else if (updateLikedReviewForm.getEmotion() == 6)
+//        {
+//            likedReview.setEmotion(Constant.EMOTION_ANGRY);
+//            apiResponseDto.setMessage("Emotion is angry");
+//        }
         likedReviewRepository.save(likedReview);
         apiResponseDto.setResult(true);
         apiResponseDto.setData(likedReview.getId());
@@ -155,6 +160,24 @@ public class LikedReviewController{
         likedReviewRepository.delete(likedReview);
         apiResponseDto.setResult(true);
         apiResponseDto.setMessage("Liked review deleted successfully!");
+        return apiResponseDto;
+    }
+
+    @GetMapping(value = "/list-by-accountId-token", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ResponseListDto<LikeReviewDto>> listLikedReviewByAccountIdToken(LikedReviewCriteria criteria, Pageable pageable) {
+        ApiResponseDto<ResponseListDto<LikeReviewDto>> apiResponseDto = new ApiResponseDto<>();
+        Long accountId = getCurrentUser();
+        if (accountId == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.ACCOUNT_NOT_FOUND);
+            apiResponseDto.setMessage("Invalid token!");
+            return apiResponseDto;
+        }
+        criteria.setAccountId(accountId);
+        Page page = likedReviewRepository.findAll(criteria.getSpecification(), pageable);
+        ResponseListDto<LikeReviewDto> responseListDto = new ResponseListDto(likedReviewMapper.fromEntityToLikeReviewDtoList(page.getContent()), page.getTotalElements(), page.getTotalPages());
+        apiResponseDto.setResult(true);
+        apiResponseDto.setData(responseListDto);
         return apiResponseDto;
     }
 }

@@ -37,6 +37,7 @@ public interface EpisodeMapper {
     @Mapping(source = "description", target = "description")
     @Mapping(source = "url", target = "url")
     @Mapping(source = "episodeNumber", target = "episodeNumber")
+    @Mapping(source = "movieId", target = "movie.id")
     @BeanMapping(ignoreByDefault = true)
     void mappingUpdateForm(UpdateEpisodeForm updateEpisodeForm, @MappingTarget SubMovie episode);
 }

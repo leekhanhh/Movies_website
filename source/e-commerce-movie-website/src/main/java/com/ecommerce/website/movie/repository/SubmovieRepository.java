@@ -8,7 +8,4 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface SubmovieRepository extends JpaRepository<SubMovie, Long>, JpaSpecificationExecutor<SubMovie> {
     SubMovie findByEpisodeNumberAndMovieId(int episodeNumber, Long movieId);
-    @Modifying
-    @Query("UPDATE SubMovie e SET e.movie.id = :newMovieId WHERE e.id = :episodeId")
-    void updateEpisodeMovieId(Long episodeId, Long newMovieId);
 }

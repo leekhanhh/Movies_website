@@ -42,4 +42,5 @@ public interface ReviewMapper {
     @BeanMapping(ignoreByDefault = true)
     @Named("updateReviewEntity")
     void updateReviewEntity(UpdateReviewForm updateReviewForm, @MappingTarget Review review);
+
 }

@@ -40,5 +40,7 @@ public class Movie extends Auditable<String> {
     private List<VoteMovie> voteMovies = new ArrayList<>();
     @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Rating> ratings = new ArrayList<>();
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
     private String videoGridFs;
 }

@@ -57,6 +57,8 @@ public class MovieController {
     MovieGenreMapper movieGenreMapper;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    WatchedMovieRepository watchedMovieRepository;
 
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -99,6 +101,7 @@ public class MovieController {
             movieRepository.delete(movie);
             movieService.deleteVideoS3ByLink(movie.getVideoGridFs());
             movieService.deleteFileS3(movie.getImagePath());
+            watchedMovieRepository.deleteAllByMovieId(id);
             apiResponseDto.setMessage("Movie deleted successfully!");
         } else {
             apiResponseDto.setMessage("Movie not found!");
@@ -137,7 +140,7 @@ public class MovieController {
 
 
     @GetMapping(value = "/list-server", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ApiResponseDto<ResponseListDto<MovieDto>> listMovie(MovieCriteria movieCriteria, Pageable pageable) {
+    public ApiResponseDto<ResponseListDto<MovieDto>> listMovie( MovieCriteria movieCriteria, Pageable pageable) {
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createdDate"));
         Page<Movie> moviePage = movieRepository.findAll(movieCriteria.getSpecification(), pageable);

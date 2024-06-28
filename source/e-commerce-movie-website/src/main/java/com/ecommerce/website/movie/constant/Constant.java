@@ -37,7 +37,7 @@ public class Constant {
 
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
-    public static final String VIDEO_CONTENT = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
+    public static final String AWS_ENDPOINT = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
     public static final String CONTENT_RANGE = "Content-Range";
     public static final String ACCEPT_RANGES = "Accept-Ranges";
     public static final String BYTES = "bytes";

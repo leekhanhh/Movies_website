@@ -20,6 +20,7 @@ public class AccountCriteria implements Serializable {
     String email;
     String fullname;
     String phone;
+    Integer role;
 
     public Specification<Account> getSpecification() {
         return new Specification<Account>() {
@@ -39,6 +40,9 @@ public class AccountCriteria implements Serializable {
                 }
                 if (getPhone() != null) {
                     predicates.add(criteriaBuilder.like(root.get("phone"), "%" + getPhone() + "%"));
+                }
+                if(getRole() != null){
+                    predicates.add(criteriaBuilder.equal(root.get("role"), getRole()));
                 }
                 return criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
             }

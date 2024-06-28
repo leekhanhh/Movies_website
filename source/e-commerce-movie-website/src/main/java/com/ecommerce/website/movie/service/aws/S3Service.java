@@ -57,7 +57,8 @@ public class S3Service {
 
     public void deleteFile(String fileName) {
         log.info("[AWS S3] Deleting file: " + fileName + " from bucket: " + bucketName + "...");
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, fileName).withKey(fileName);
+        String file_name_new = fileName.replace("https://" + bucketName + ".s3." + region + ".amazonaws.com/", "");
+        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucketName, file_name_new).withKey(file_name_new);
         s3Client.deleteObject(deleteObjectRequest);
     }
 

@@ -14,6 +14,7 @@ import com.ecommerce.website.movie.mapper.AccountMapper;
 import com.ecommerce.website.movie.model.Account;
 import com.ecommerce.website.movie.model.criteria.AccountCriteria;
 import com.ecommerce.website.movie.repository.AccountRepository;
+import com.ecommerce.website.movie.repository.WatchedMovieRepository;
 import com.ecommerce.website.movie.service.EmailService;
 import com.ecommerce.website.movie.service.OTPService;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +52,8 @@ public class AccountController extends BaseController{
     EmailService emailService;
     @Autowired
     OTPService otpService;
+    @Autowired
+    WatchedMovieRepository watchedMovieRepository;
 
     @PostMapping(value = "/create-admin", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -122,6 +125,7 @@ public class AccountController extends BaseController{
             return apiResponseDto;
         }
         accountRepository.deleteById(id);
+        watchedMovieRepository.deleteAllByAccountId(id);
         apiResponseDto.setMessage("Account has been deleted successfully!");
         return apiResponseDto;
     }

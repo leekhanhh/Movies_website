@@ -29,7 +29,7 @@ import javax.validation.Valid;
 @RequestMapping("/v1/review")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
-public class ReviewController {
+public class  ReviewController {
     @Autowired
     private ReviewRepository reviewRepository;
     @Autowired

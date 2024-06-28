@@ -12,6 +12,7 @@ import com.ecommerce.website.movie.model.SubMovie;
 import com.ecommerce.website.movie.model.criteria.EpisodeCriteria;
 import com.ecommerce.website.movie.repository.MovieRepository;
 import com.ecommerce.website.movie.repository.SubmovieRepository;
+import com.ecommerce.website.movie.service.MovieService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -36,6 +37,8 @@ public class EpisodeController {
     EpisodeMapper episodeMapper;
     @Autowired
     MovieRepository movieRepository;
+    @Autowired
+    MovieService movieService;
 
     @PostMapping(value = "/create-episode", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
@@ -50,6 +53,7 @@ public class EpisodeController {
         }
 
         Movie movie = movieRepository.findById(episodeForm.getMovieId()).orElse(null);
+
         if (movie == null) {
             apiResponseDto.setResult(false);
             apiResponseDto.setCode(ErrorCode.MOVIE_NOT_FOUND);
@@ -97,6 +101,7 @@ public class EpisodeController {
             return apiResponseDto;
         }
         episodeRepository.delete(episode);
+        movieService.deleteVideoS3ByLink(episode.getUrl());
         apiResponseDto.setResult(true);
         apiResponseDto.setMessage("Success");
         return apiResponseDto;
@@ -115,7 +120,6 @@ public class EpisodeController {
         }
         episodeMapper.mappingUpdateForm(updateEpisodeForm, episode);
         episodeRepository.save(episode);
-        episodeRepository.updateEpisodeMovieId(updateEpisodeForm.getId(), updateEpisodeForm.getMovieId());
         apiResponseDto.setResult(true);
         apiResponseDto.setMessage("Success");
         return apiResponseDto;

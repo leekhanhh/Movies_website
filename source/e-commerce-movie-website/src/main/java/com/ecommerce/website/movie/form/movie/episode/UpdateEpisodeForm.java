@@ -8,6 +8,6 @@ public class UpdateEpisodeForm {
     private String title;
     private String description;
     private String url;
-    private int episodeNumber;
+    private Integer episodeNumber;
     private Long movieId;
 }
