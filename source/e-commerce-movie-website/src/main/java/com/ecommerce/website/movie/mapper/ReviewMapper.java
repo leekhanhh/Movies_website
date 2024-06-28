@@ -43,4 +43,8 @@ public interface ReviewMapper {
     @Named("updateReviewEntity")
     void updateReviewEntity(UpdateReviewForm updateReviewForm, @MappingTarget Review review);
 
+    @Mapping(source = "id", target = "id")
+    @BeanMapping(ignoreByDefault = true)
+    @Named("fromReviewEntityJustIdToDto")
+    ReviewDto fromReviewEntityJustIdToDto(Review review);
 }

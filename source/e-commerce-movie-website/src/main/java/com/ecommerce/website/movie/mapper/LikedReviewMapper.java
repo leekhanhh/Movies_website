@@ -22,7 +22,7 @@ public interface LikedReviewMapper {
     void updateLikedReviewFromEntity(UpdateLikedReviewForm updateLikedReviewForm, @MappingTarget LikedReview likedReview);
 
     @Mapping(target = "accountId", source = "account.id")
-    @Mapping(target = "review", source = "review")
+    @Mapping(target = "review", source = "review", qualifiedByName = "fromReviewEntityToDto")
     @Mapping(target = "emotion", source = "emotion")
     @BeanMapping(ignoreByDefault = true)
     @Named("fromEntityToLikeReviewDto")
