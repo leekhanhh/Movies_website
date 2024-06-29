@@ -12,4 +12,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecif
     List<Review> findByAccountId(Long accountId);
     List<Review> findByAccountIdAndMovieId(Long accountId, Long movieId);
     void deleteByAccountIdAndMovieId(Long accountId, Long movieId);
+    List<Review> findAllByMovieId(Long movieId);
 }

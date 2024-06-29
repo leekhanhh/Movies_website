@@ -125,6 +125,20 @@ public class EpisodeController {
         return apiResponseDto;
     }
 
-
+    @GetMapping(value = "/get-episode-by-id/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<EpisodeDto> getEpisodeById(@PathVariable Long id) {
+        ApiResponseDto<EpisodeDto> apiResponseDto = new ApiResponseDto<>();
+        SubMovie episode = episodeRepository.findById(id).orElse(null);
+        if (episode == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setCode(ErrorCode.EPISODE_NOT_FOUND);
+            apiResponseDto.setMessage("Episode Not Found Error");
+            return apiResponseDto;
+        }
+        apiResponseDto.setResult(true);
+        apiResponseDto.setData(episodeMapper.toEpisodeDto(episode));
+        apiResponseDto.setMessage("Success");
+        return apiResponseDto;
+    }
 
 }

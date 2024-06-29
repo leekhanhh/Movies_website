@@ -108,4 +108,18 @@ public class ParticipantController {
         return apiResponseDto;
     }
 
+        @GetMapping (value = "/detail/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponseDto<ParticipantDto> detailParticipant(@PathVariable Long id) {
+        ApiResponseDto<ParticipantDto> apiResponseDto = new ApiResponseDto<>();
+        Participant participant = participantRepository.findById(id).orElse(null);
+        if (participant != null) {
+            ParticipantDto participantDto = participantMapper.toParticipantDto(participant);
+            apiResponseDto.setData(participantDto);
+            apiResponseDto.setMessage("Get participant detail successfully!");
+        } else {
+            apiResponseDto.setCode(ErrorCode.PARTICIPANT_NOT_FOUND);
+            apiResponseDto.setMessage("Participant not found!");
+        }
+        return apiResponseDto;
+    }
 }
