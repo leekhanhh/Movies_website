@@ -21,6 +21,7 @@ public interface LikedReviewMapper {
     @BeanMapping(ignoreByDefault = true)
     void updateLikedReviewFromEntity(UpdateLikedReviewForm updateLikedReviewForm, @MappingTarget LikedReview likedReview);
 
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "accountId", source = "account.id")
     @Mapping(target = "reviewId", source = "review.id")
     @Mapping(target = "movieId", source = "review.movie.id")
