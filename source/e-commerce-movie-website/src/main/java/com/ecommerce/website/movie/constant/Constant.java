@@ -34,7 +34,7 @@ public class Constant {
 
     //Http
     public static final String VIDEO = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
-
+    public static final String BUCKET_NAME = "movies-website-tlcn-project";
     public static final String CONTENT_TYPE = "Content-Type";
     public static final String CONTENT_LENGTH = "Content-Length";
     public static final String AWS_ENDPOINT = "https://movies-website-tlcn-project.s3.ap-southeast-1.amazonaws.com/";
