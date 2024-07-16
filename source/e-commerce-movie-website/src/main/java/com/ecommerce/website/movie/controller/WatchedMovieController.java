@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 @org.springframework.web.bind.annotation.RequestMapping("/v1/watched-movie")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @Slf4j
-public class WatchedMovieController {
+public class WatchedMovieController extends BaseController{
     @Autowired
     WatchedMovieRepository watchedMovieRepository;
     @Autowired
@@ -58,7 +58,7 @@ public class WatchedMovieController {
     @Autowired
     MovieService movieService;
 
-    @DeleteMapping(value = "/delete-watched-movie-until-20-latest", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/delete-watched-movie-until-10-latest", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<Long> deleteWatchedMovieUntil20Latest(@RequestParam("accountId") Long accountId){
         ApiResponseDto<Long> apiResponseDto = new ApiResponseDto<>();
         Query query = new Query(Criteria.where("accountId").is(accountId))
@@ -74,13 +74,20 @@ public class WatchedMovieController {
         }
         apiResponseDto.setResult(true);
         apiResponseDto.setData(accountId);
-        apiResponseDto.setMessage("Delete watched movie until 20 latest successfully!");
+        apiResponseDto.setMessage("Delete watched movie until 10 latest successfully!");
         return apiResponseDto;
     }
 
     @GetMapping(value = "/list-watched-movie-by-accountId", produces = org.springframework.http.MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<ResponseListDto<MovieDto>> listWatchedMovieByAccountId(WatchedMovieCriteria watchedMovieCriteria, Pageable pageable){
         ApiResponseDto<ResponseListDto<MovieDto>> apiResponseDto = new ApiResponseDto<>();
+        Long accountId = getCurrentUser();
+        if (accountId == null) {
+            apiResponseDto.setResult(false);
+            apiResponseDto.setMessage("Account not found!");
+            return apiResponseDto;
+        }
+        watchedMovieCriteria.setAccountId(accountId);
         List<Movie> movieList = movieService.rankingMovieToRecommendListFavoriteByGenre(watchedMovieCriteria.getAccountId());
         Page<Movie> moviePage = new PageImpl<>(movieList, pageable, movieList.size());
         List<MovieDto> movieDtoList = movieMapper.toClientMovieDtoList(moviePage.getContent());
