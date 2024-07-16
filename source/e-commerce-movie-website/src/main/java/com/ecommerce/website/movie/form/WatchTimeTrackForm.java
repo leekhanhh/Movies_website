@@ -1,11 +1,9 @@
-package com.ecommerce.website.movie.form.movie.watchedmovie;
+package com.ecommerce.website.movie.form;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
-public class CreateWatchedMovieForm {
+public class WatchTimeTrackForm {
     private Long accountId;
     private Long movieId;
     private Long watchedTime;

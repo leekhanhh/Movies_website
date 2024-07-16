@@ -15,13 +15,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Document(collection = "watched-movie")
+@Document(collection = "watched-time-movie")
 @EntityListeners(AuditingEntityListener.class)
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WatchedMovies extends Auditable<ObjectId> {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     ObjectId id;
-    Long accountId;
-    Long movieId;
+    private Long accountId;
+    private Long movieId;
+    private Long watchedTime;
+    private Long duration;
 }

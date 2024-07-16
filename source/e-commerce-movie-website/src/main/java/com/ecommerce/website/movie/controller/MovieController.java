@@ -101,7 +101,6 @@ public class MovieController {
             movieRepository.delete(movie);
             movieService.deleteVideoS3ByLink(movie.getVideoGridFs());
             movieService.deleteFileS3(movie.getImagePath());
-            watchedMovieRepository.deleteAllByMovieId(id);
             apiResponseDto.setMessage("Movie deleted successfully!");
         } else {
             apiResponseDto.setMessage("Movie not found!");

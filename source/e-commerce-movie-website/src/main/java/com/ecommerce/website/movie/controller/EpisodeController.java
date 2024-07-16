@@ -80,8 +80,8 @@ public class EpisodeController {
     @GetMapping(value = "/get-episode-list-by-movie", produces = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponseDto<ResponseListDto<SubMovie>> getEpisodeListByMovie(EpisodeCriteria episodeCriteria, Pageable pageable) {
         ApiResponseDto<ResponseListDto<SubMovie>> apiResponseDto = new ApiResponseDto<>();
-        Page<SubMovie> episodePage = episodeRepository.findAll(episodeCriteria.getSpecification(), pageable);
         pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "episodeNumber"));
+        Page<SubMovie> episodePage = episodeRepository.findAll(episodeCriteria.getSpecification(), pageable);
         ResponseListDto<SubMovie> responseListDto = new ResponseListDto(episodeMapper.toEpisodeList(episodePage.getContent()), episodePage.getTotalElements(), episodePage.getTotalPages());
         apiResponseDto.setResult(true);
         apiResponseDto.setData(responseListDto);

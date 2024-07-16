@@ -12,6 +12,13 @@ import com.ecommerce.website.movie.dto.UploadFileDto;
 import com.ecommerce.website.movie.dto.UploadVideoDto;
 import com.ecommerce.website.movie.dto.aws.FileS3Dto;
 import com.ecommerce.website.movie.form.UploadFileForm;
+import com.ecommerce.website.movie.model.Movie;
+import com.ecommerce.website.movie.model.MovieGenre;
+import com.ecommerce.website.movie.model.Review;
+import com.ecommerce.website.movie.model.WatchedMovies;
+import com.ecommerce.website.movie.repository.MovieRepository;
+import com.ecommerce.website.movie.repository.ReviewRepository;
+import com.ecommerce.website.movie.repository.WatchedMovieRepository;
 import com.ecommerce.website.movie.service.aws.S3Service;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +57,11 @@ public class MovieService {
     @Autowired
     private S3Service s3Service;
     @Autowired
-    WatchedMovieController watchedMovieController;
+    private WatchedMovieRepository watchedMovieRepository;
+    @Autowired
+    private MovieRepository movieRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
     private final WebClient webClient;
     private final AmazonS3 s3Client;
 
@@ -157,5 +168,46 @@ public class MovieService {
         } else {
             throw new RuntimeException("Cannot retrieve file URL from S3 for " + fileName);
         }
+    }
+
+    public List<Movie> rankingMovieToRecommendListFavoriteByGenre(Long accountId) {
+        List<Movie> movieListFavorite = new ArrayList<>();
+        List<WatchedMovies> watchedMovies = watchedMovieRepository.findAllByAccountId(accountId);
+        for (WatchedMovies watchedMovie : watchedMovies) {
+            if (watchedMovie.getWatchedTime() > watchedMovie.getDuration() / 2) {
+                Movie movie = movieRepository.findById(watchedMovie.getMovieId()).orElse(null);
+                if (movie != null) {
+                    movieListFavorite.add(movie);
+                }
+            }
+        }
+
+        Map<Long, Integer> countMovieByGenre = new HashMap<>();
+        for (Movie movie : movieListFavorite) {
+            for (MovieGenre genre : movie.getGenres()) {
+                countMovieByGenre.put(genre.getId(), countMovieByGenre.getOrDefault(genre.getId(), 0) + 1);
+            }
+        }
+
+        Long mostFrequentGenreId = null;
+        int maxCount = 0;
+        for (Map.Entry<Long, Integer> entry : countMovieByGenre.entrySet()) {
+            if (entry.getValue() > maxCount) {
+                maxCount = entry.getValue();
+                mostFrequentGenreId = entry.getKey();
+            }
+        }
+
+        List<Movie> movieListFavoriteByGenre = new ArrayList<>();
+        if (mostFrequentGenreId != null) {
+            List<Movie> moviesByGenre = movieRepository.findAllByCategoryId(mostFrequentGenreId);
+
+            for (Movie movie : moviesByGenre) {
+                if (!movieListFavorite.contains(movie)) {
+                    movieListFavoriteByGenre.add(movie);
+                }
+            }
+        }
+        return movieListFavoriteByGenre;
     }
 }
